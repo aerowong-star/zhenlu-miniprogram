@@ -1,0 +1,16 @@
+.topline { color:#197278; font-size:23rpx; font-weight:700; letter-spacing:2rpx; margin-bottom:22rpx; }
+.patient-hero { position:relative; overflow:hidden; padding:34rpx; background:linear-gradient(135deg,#173f4d,#197278); color:#fff; border:none; }
+.hero-head { display:flex; justify-content:space-between; gap:20rpx; }
+.hello { font-size:40rpx; font-weight:700; }
+.disease { margin-top:10rpx; opacity:.78; }
+.switch { height:54rpx; padding:0 18rpx; line-height:54rpx; border-radius:28rpx; background:rgba(255,255,255,.14); font-size:23rpx; }
+.meta-row { display:grid; grid-template-columns:1fr 1fr; gap:20rpx; margin-top:38rpx; }
+.meta-row view { padding-top:20rpx; border-top:1rpx solid rgba(255,255,255,.2); }
+.meta-row text { display:block; font-size:22rpx; opacity:.65 }.meta-row .meta-value{margin-top:8rpx;font-size:27rpx;opacity:1;font-weight:650}
+.demo-ribbon { margin:26rpx -34rpx -34rpx; padding:14rpx 34rpx; background:rgba(255,255,255,.1); font-size:23rpx; }
+.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:18rpx; margin-top:22rpx; }
+.action { padding:26rpx 22rpx; border-radius:22rpx; background:#fff; border:1rpx solid #dfe8eb; }
+.action.primary { background:#e8f4f3; border-color:#c5e2df; }.action-icon{width:58rpx;height:58rpx;line-height:56rpx;text-align:center;border-radius:18rpx;background:#197278;color:#fff;font-size:36rpx}.action-icon.pale{background:#edf3f4;color:#197278}
+.action text{display:block}.action .action-title{margin-top:18rpx;font-size:28rpx;font-weight:650;color:#173042}.action text{margin-top:8rpx;color:#70828b;font-size:22rpx;line-height:1.5}
+.section-head{display:flex;align-items:center;justify-content:space-between}.section-head>view:last-child{color:#197278;font-size:25rpx}
+.recent-list{padding:4rpx 26rpx}.recent-item{display:flex;align-items:center;padding:24rpx 0}.recent-item+.recent-item{border-top:1rpx solid #e8edef}.recent-dot{width:16rpx;height:16rpx;border-radius:50%;background:#197278;margin-right:20rpx}.recent-content{flex:1}.recent-top{display:flex;gap:12rpx;align-items:center}.recent-title{font-weight:650}.recent-date{margin-top:8rpx;color:#819099;font-size:23rpx}.chevron{color:#9aa8ae;font-size:44rpx}.empty-home{text-align:center;margin-top:80rpx}.empty-symbol{font-size:80rpx;color:#197278}.empty-home button{margin-top:30rpx}

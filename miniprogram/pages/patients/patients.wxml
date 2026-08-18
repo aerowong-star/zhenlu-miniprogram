@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="page-title">患者档案</view>
+  <view class="page-subtitle">一个微信用户可以管理多份档案；当前使用的档案会用于首页和病程时间线。</view>
+  <view class="section-title">全部档案（{{patients.length}}）</view>
+  <view wx:if="{{patients.length}}">
+    <view class="patient-card card {{activePatientId === item.id ? 'active' : ''}}" wx:for="{{patients}}" wx:key="id">
+      <view class="avatar">{{item.initial}}</view>
+      <view class="patient-info" data-id="{{item.id}}" bindtap="selectPatient">
+        <view class="name-row"><text class="patient-name">{{item.nickname}}</text><text wx:if="{{activePatientId === item.id}}" class="tag">当前</text><text wx:if="{{item.isDemo}}" class="demo-tag">示例</text></view>
+        <view class="disease">{{item.diseaseName}}</view>
+        <view class="detail">{{item.relationship || '关系待补充'}} · {{item.stage || '阶段待补充'}}</view>
+      </view>
+      <view class="edit" data-id="{{item.id}}" bindtap="editPatient">编辑</view>
+    </view>
+  </view>
+  <view wx:else class="card empty">暂无患者档案。创建档案后即可记录病程。</view>
+  <button class="primary-button add" bindtap="addPatient">新建患者档案</button>
+</view>

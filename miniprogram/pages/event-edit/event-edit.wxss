@@ -1,0 +1,1 @@
+.form-page{padding-bottom:100rpx}.type-grid{display:flex;flex-wrap:wrap;gap:14rpx}.type-item{padding:14rpx 21rpx;border-radius:999rpx;background:#fff;border:1rpx solid #dfe8eb;color:#667b85;font-size:25rpx}.type-item.active{background:#197278;border-color:#197278;color:#fff}.save{margin-top:30rpx}

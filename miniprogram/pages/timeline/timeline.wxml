@@ -1,0 +1,23 @@
+<view class="page timeline-page">
+  <view class="timeline-head">
+    <view><view class="page-title">病程时间线</view><view class="page-subtitle" wx:if="{{patient}}">{{patient.nickname}} · {{patient.diseaseName}}</view></view>
+    <view class="patient-switch" bindtap="goPatients">切换</view>
+  </view>
+  <scroll-view wx:if="{{patient}}" class="filters" scroll-x enable-flex>
+    <view class="filter {{activeFilter===item.key?'active':''}}" wx:for="{{filters}}" wx:key="key" data-key="{{item.key}}" bindtap="filter">{{item.label}}</view>
+  </scroll-view>
+  <view wx:if="{{events.length}}" class="timeline">
+    <view class="event" wx:for="{{events}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+      <view class="rail"><view class="dot"></view><view class="line"></view></view>
+      <view class="event-card card">
+        <view class="event-meta"><text>{{item.displayDate}}</text><text class="tag">{{item.typeLabel}}</text></view>
+        <view class="event-title">{{item.title}}</view>
+        <view class="event-description" wx:if="{{item.description}}">{{item.description}}</view>
+        <view class="event-place" wx:if="{{item.hospital || item.department}}">{{item.hospital || '机构待补充'}} · {{item.department || '科室待补充'}}</view>
+      </view>
+    </view>
+  </view>
+  <view wx:elif="{{patient}}" class="card empty">当前筛选下没有记录。你可以手动添加一次检查、就诊或用药事件。</view>
+  <view wx:else class="card empty"><view>请先创建或选择患者档案。</view><button class="secondary-button" bindtap="goPatients">前往患者档案</button></view>
+  <view wx:if="{{patient}}" class="fab" bindtap="add">＋</view>
+</view>

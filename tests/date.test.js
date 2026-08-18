@@ -1,0 +1,5 @@
+const test=require('node:test'); const assert=require('node:assert/strict')
+const {isValidDate,formatDate,compareDateDesc}=require('../miniprogram/utils/date')
+test('validates calendar dates',()=>{assert.equal(isValidDate('2026-02-28'),true);assert.equal(isValidDate('2026-02-30'),false);assert.equal(isValidDate('26-02-28'),false)})
+test('formats date for Chinese display',()=>assert.equal(formatDate('2026-08-13'),'2026年8月13日'))
+test('sort comparator orders newest first',()=>{const rows=[{date:'2025-01-01'},{date:'2026-01-01'}];rows.sort(compareDateDesc);assert.equal(rows[0].date,'2026-01-01')})

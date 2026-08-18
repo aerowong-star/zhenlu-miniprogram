@@ -1,0 +1,5 @@
+project.private.config.json
+node_modules/
+coverage/
+.DS_Store
+*.log

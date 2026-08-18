@@ -1,0 +1,13 @@
+{
+  "name": "zhenlu-miniprogram",
+  "version": "0.1.0",
+  "private": true,
+  "description": "诊路微信小程序第一阶段：示例体验、患者档案、手动病程事件和时间线",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check miniprogram/services/data-service.js && node --check miniprogram/services/demo-service.js && node --check miniprogram/utils/date.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

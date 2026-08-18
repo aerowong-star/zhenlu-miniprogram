@@ -1,0 +1,19 @@
+<view class="welcome">
+  <view class="brand-mark">诊</view>
+  <view class="eyebrow">RARE DISEASE CARE NOTES</view>
+  <view class="hero-title">让漫长病程，<text>清晰可见</text></view>
+  <view class="hero-copy">整理检查、就诊和用药变化，为下一次复诊准备一份可靠的个人记录。</view>
+
+  <view class="feature-card">
+    <view class="feature"><view class="feature-icon">01</view><view><view class="feature-title">建立患者档案</view><view class="feature-copy">只记录当前阶段真正需要的信息</view></view></view>
+    <view class="feature"><view class="feature-icon">02</view><view><view class="feature-title">手动记录病程</view><view class="feature-copy">用时间线保存重要检查和就诊节点</view></view></view>
+    <view class="feature"><view class="feature-icon">03</view><view><view class="feature-title">先体验再决定</view><view class="feature-copy">示例数据可随时清除，不需要真实病历</view></view></view>
+  </view>
+
+  <view class="agreement" bindtap="toggleAgreement">
+    <view class="checkbox {{agreed ? 'checked' : ''}}">{{agreed ? '✓' : ''}}</view>
+    <view>我已了解：当前版本仅用于个人资料整理，不提供诊断、治疗或用药建议。</view>
+  </view>
+  <button class="primary-button" bindtap="startDemo">体验示例病例</button>
+  <button class="text-button" bindtap="createProfile">创建自己的档案</button>
+</view>
