@@ -1,0 +1,17 @@
+<view class="page form-page">
+  <view class="page-title">{{id ? '编辑患者档案' : '新建患者档案'}}</view>
+  <view class="page-subtitle">仅填写支持病程整理所需的信息。身份证号、详细住址等信息不在收集范围内。</view>
+  <view wx:if="{{isDemo}}" class="safe-note">你正在编辑虚构示例档案。修改只会保存在当前设备；原始示例可以在设置中重新载入。</view>
+  <view class="section-title">基本信息</view>
+  <label class="label required">患者称呼</label><input class="field" maxlength="20" placeholder="例如：小雨、妈妈" value="{{form.nickname}}" data-field="nickname" bindinput="fieldInput" />
+  <label class="label">出生年份</label><input class="field" type="number" maxlength="4" placeholder="例如：2016" value="{{form.birthYear}}" data-field="birthYear" bindinput="fieldInput" />
+  <label class="label">你与患者的关系</label><picker range="{{relationshipOptions}}" value="{{relationshipIndex}}" bindchange="relationshipChange"><view class="field picker-field {{relationshipIndex < 0 ? 'placeholder' : ''}}">{{relationshipIndex < 0 ? '请选择' : relationshipOptions[relationshipIndex]}}</view></picker>
+  <view class="section-title">病程信息</view>
+  <label class="label required">已确诊病种</label><input class="field" maxlength="50" placeholder="请输入医生已明确诊断的病种" value="{{form.diseaseName}}" data-field="diseaseName" bindinput="fieldInput" />
+  <view class="helper">本字段只用于归档，不会用于疾病判断。</view>
+  <label class="label">确诊日期</label><picker mode="date" end="{{maxDate}}" value="{{form.diagnosisDate}}" bindchange="dateChange"><view class="field picker-field {{!form.diagnosisDate ? 'placeholder' : ''}}">{{form.diagnosisDate || '请选择日期'}}</view></picker>
+  <label class="label">当前阶段</label><picker range="{{stageOptions}}" value="{{stageIndex}}" bindchange="stageChange"><view class="field picker-field {{stageIndex < 0 ? 'placeholder' : ''}}">{{stageIndex < 0 ? '请选择' : stageOptions[stageIndex]}}</view></picker>
+  <label class="label">主要复诊科室</label><input class="field" maxlength="30" placeholder="例如：遗传代谢科" value="{{form.department}}" data-field="department" bindinput="fieldInput" />
+  <button class="primary-button save" bindtap="save">保存档案</button>
+  <button wx:if="{{id}}" class="danger-button remove" bindtap="remove">删除患者档案</button>
+</view>

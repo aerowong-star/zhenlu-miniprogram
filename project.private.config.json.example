@@ -1,0 +1,6 @@
+{
+  "projectname": "zhenlu-miniprogram-local",
+  "setting": {
+    "compileHotReLoad": true
+  }
+}

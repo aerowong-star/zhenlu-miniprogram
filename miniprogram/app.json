@@ -1,0 +1,33 @@
+{
+  "pages": [
+    "pages/welcome/welcome",
+    "pages/home/home",
+    "pages/patients/patients",
+    "pages/patient-edit/patient-edit",
+    "pages/timeline/timeline",
+    "pages/event-edit/event-edit",
+    "pages/event-detail/event-detail",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "navigationBarTitleText": "诊路",
+    "navigationBarBackgroundColor": "#F7FAFC",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F4F7F8",
+    "backgroundTextStyle": "light"
+  },
+  "tabBar": {
+    "color": "#718096",
+    "selectedColor": "#197278",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/home", "text": "首页" },
+      { "pagePath": "pages/timeline/timeline", "text": "病程" },
+      { "pagePath": "pages/patients/patients", "text": "档案" },
+      { "pagePath": "pages/settings/settings", "text": "设置" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

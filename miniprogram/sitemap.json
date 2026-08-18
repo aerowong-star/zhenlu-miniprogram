@@ -1,0 +1,4 @@
+{
+  "desc": "诊路页面索引配置",
+  "rules": [{ "action": "disallow", "page": "*" }]
+}

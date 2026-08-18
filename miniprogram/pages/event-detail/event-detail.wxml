@@ -1,0 +1,12 @@
+<view class="page" wx:if="{{event}}">
+  <view class="detail-hero card"><view class="tag">{{event.typeLabel}}</view><view class="detail-title">{{event.title}}</view><view class="detail-date">{{event.displayDate}}</view></view>
+  <view class="section-title">记录内容</view>
+  <view class="card detail-list">
+    <view class="detail-row"><text>患者档案</text><text class="detail-value">{{patient.nickname}}</text></view>
+    <view class="detail-row"><text>医院或机构</text><text class="detail-value">{{event.hospital || '未填写'}}</text></view>
+    <view class="detail-row"><text>科室</text><text class="detail-value">{{event.department || '未填写'}}</text></view>
+    <view class="detail-row description"><text>详细记录</text><text class="detail-value">{{event.description || '未填写'}}</text></view>
+  </view>
+  <view wx:if="{{event.isDemo}}" class="safe-note">这是一条虚构示例记录，不代表真实医疗信息。</view>
+  <view class="button-row"><button class="secondary-button" bindtap="edit">编辑</button><button class="danger-button" bindtap="remove">删除</button></view>
+</view>

@@ -1,0 +1,13 @@
+<view class="page form-page">
+  <view class="page-title">{{id?'编辑病程事件':'记录病程事件'}}</view>
+  <view class="page-subtitle" wx:if="{{patient}}">将保存到：{{patient.nickname}} · {{patient.diseaseName}}</view>
+  <label class="label required">事件类型</label>
+  <view class="type-grid"><view class="type-item {{form.type===item.key?'active':''}}" wx:for="{{types}}" wx:key="key" data-key="{{item.key}}" bindtap="chooseType">{{item.label}}</view></view>
+  <label class="label required">发生日期</label><picker mode="date" end="{{maxDate}}" value="{{form.date}}" bindchange="dateChange"><view class="field picker-field">{{form.date}}</view></picker>
+  <label class="label required">事件标题</label><input class="field" maxlength="40" placeholder="例如：遗传代谢科复诊" value="{{form.title}}" data-field="title" bindinput="fieldInput" />
+  <label class="label">详细记录</label><textarea class="field" maxlength="500" placeholder="记录已经发生的事实，不需要在这里判断病情" value="{{form.description}}" data-field="description" bindinput="fieldInput" />
+  <label class="label">医院或机构</label><input class="field" maxlength="50" placeholder="选填" value="{{form.hospital}}" data-field="hospital" bindinput="fieldInput" />
+  <label class="label">科室</label><input class="field" maxlength="30" placeholder="选填" value="{{form.department}}" data-field="department" bindinput="fieldInput" />
+  <view class="safe-note">请记录医疗文件或实际就诊中已明确的信息。小程序不会根据这条记录生成诊断或治疗建议。</view>
+  <button class="primary-button save" bindtap="save">保存到时间线</button>
+</view>

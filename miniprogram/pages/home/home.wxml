@@ -1,0 +1,32 @@
+<view class="page home">
+  <view class="topline">诊路 · 病程整理助手</view>
+  <block wx:if="{{patient}}">
+    <view class="patient-hero card">
+      <view class="hero-head">
+        <view><view class="hello">你好，{{patient.nickname}}</view><view class="disease">{{patient.diseaseName}}</view></view>
+        <view class="switch" bindtap="goPatients">切换档案</view>
+      </view>
+      <view class="meta-row">
+        <view><text>当前阶段</text><text class="meta-value">{{patient.stage || '待补充'}}</text></view>
+        <view><text>主要科室</text><text class="meta-value">{{patient.department || '待补充'}}</text></view>
+      </view>
+      <view wx:if="{{patient.isDemo}}" class="demo-ribbon">当前为虚构示例档案</view>
+    </view>
+    <view class="action-grid">
+      <view class="action primary" bindtap="addEvent"><view class="action-icon">＋</view><view><text class="action-title">记录病程</text><text>添加检查、就诊或用药事件</text></view></view>
+      <view class="action" bindtap="goTimeline"><view class="action-icon pale">↗</view><view><text class="action-title">查看时间线</text><text>按时间回顾重要变化</text></view></view>
+    </view>
+    <view class="section-head"><view class="section-title">最近记录</view><view bindtap="goTimeline">查看全部</view></view>
+    <view wx:if="{{recentEvents.length}}" class="card recent-list">
+      <view class="recent-item" wx:for="{{recentEvents}}" wx:key="id" data-id="{{item.id}}" bindtap="openEvent">
+        <view class="recent-dot"></view><view class="recent-content"><view class="recent-top"><text class="recent-title">{{item.title}}</text><text class="tag">{{item.typeLabel}}</text></view><view class="recent-date">{{item.displayDate}} · {{item.hospital || '机构待补充'}}</view></view><view class="chevron">›</view>
+      </view>
+    </view>
+    <view wx:else class="card empty">还没有病程记录，点击“记录病程”添加第一条。</view>
+  </block>
+  <view wx:else class="empty-home card">
+    <view class="empty-symbol">⌁</view><view class="section-title">先建立一份患者档案</view><view class="page-subtitle">档案建立后即可手动记录病程。</view>
+    <button class="primary-button" bindtap="goPatients">前往创建</button>
+  </view>
+  <view class="safe-note">当前版本只整理用户主动填写的信息，不判断病情，也不提供用药建议。</view>
+</view>

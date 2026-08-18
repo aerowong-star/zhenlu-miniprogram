@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="page-title">设置与说明</view><view class="page-subtitle">第一阶段采用本地存储，不上传报告或个人健康信息。</view>
+  <view class="section-title">数据概览</view>
+  <view class="stats"><view class="card"><text class="stat-value">{{patientCount}}</text><text>患者档案</text></view><view class="card"><text class="stat-value">{{eventCount}}</text><text>病程事件</text></view></view>
+  <view class="card current"><text>当前档案</text><text class="current-value">{{activeName}}</text></view>
+  <view class="section-title">体验数据</view>
+  <view class="setting card" bindtap="loadDemo"><view><text class="setting-title">重新载入示例病例</text><text>不会删除你自己创建的档案</text></view><view>›</view></view>
+  <view class="section-title">产品边界</view>
+  <view class="card copy"><text class="copy-title">当前版本可以做什么</text><text>建立患者档案、手动记录病程、按时间查看事件。</text><text class="copy-title later">当前版本不做什么</text><text>不识别报告，不提供诊断、病情判断、治疗或用药建议。</text></view>
+  <view class="section-title danger-title">危险操作</view>
+  <button class="danger-button" bindtap="reset">清除全部本地数据</button>
+  <view class="version">诊路 Phase 1 · v0.1.0</view>
+</view>

@@ -1,0 +1,16 @@
+.welcome { min-height: 100vh; padding: 96rpx 40rpx 56rpx; background: linear-gradient(165deg, #f4fbfa 0%, #f7f9fa 48%, #edf4f5 100%); }
+.brand-mark { width: 88rpx; height: 88rpx; display:flex; align-items:center; justify-content:center; border-radius:28rpx; background:#197278; color:#fff; font-size:44rpx; font-weight:700; box-shadow:0 16rpx 36rpx rgba(25,114,120,.22); }
+.eyebrow { margin-top:42rpx; color:#197278; font-size:21rpx; letter-spacing:4rpx; font-weight:700; }
+.hero-title { margin-top:18rpx; max-width:600rpx; font-size:62rpx; line-height:1.22; font-weight:760; color:#173042; }
+.hero-title text { color:#197278; }
+.hero-copy { margin-top:24rpx; color:#5e737e; line-height:1.8; }
+.feature-card { margin:48rpx 0 34rpx; padding:12rpx 28rpx; background:rgba(255,255,255,.86); border:1rpx solid #dde9eb; border-radius:28rpx; }
+.feature { display:flex; gap:22rpx; padding:24rpx 0; align-items:center; }
+.feature + .feature { border-top:1rpx solid #e7edef; }
+.feature-icon { flex:none; width:58rpx; height:58rpx; line-height:58rpx; text-align:center; border-radius:18rpx; background:#e6f3f2; color:#197278; font-size:22rpx; font-weight:700; }
+.feature-title { color:#253f4d; font-weight:650; }
+.feature-copy { margin-top:6rpx; color:#7a8b94; font-size:24rpx; }
+.agreement { display:flex; gap:16rpx; align-items:flex-start; margin:0 4rpx 28rpx; color:#61747e; font-size:24rpx; line-height:1.65; }
+.checkbox { flex:none; margin-top:3rpx; width:36rpx; height:36rpx; line-height:34rpx; text-align:center; border:2rpx solid #aab8bd; border-radius:10rpx; }
+.checkbox.checked { color:#fff; background:#197278; border-color:#197278; }
+.text-button { margin-top:16rpx; color:#197278; background:transparent; font-size:28rpx; }
