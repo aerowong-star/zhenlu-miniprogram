@@ -1,9 +1,10 @@
 const { demoPatient, demoEvents, DEMO_PATIENT_ID } = require('./demo-service')
 const { compareDateDesc } = require('../utils/date')
 
-const STORAGE_KEY = 'zhenlu_phase1_state_v1'
+const STORAGE_KEY = 'zhenlu_state_v2'
+const PHASE1_STORAGE_KEY = 'zhenlu_phase1_state_v1'
 const LEGACY_STORAGE_KEY = 'hanlu_phase1_state_v1'
-const SCHEMA_VERSION = 1
+const SCHEMA_VERSION = 2
 
 function emptyState() {
   return { version: SCHEMA_VERSION, hasOnboarded: false, activePatientId: '', patients: [], events: [] }
@@ -11,7 +12,7 @@ function emptyState() {
 
 function getStorage() {
   try {
-    return wx.getStorageSync(STORAGE_KEY) || wx.getStorageSync(LEGACY_STORAGE_KEY) || null
+    return wx.getStorageSync(STORAGE_KEY) || wx.getStorageSync(PHASE1_STORAGE_KEY) || wx.getStorageSync(LEGACY_STORAGE_KEY) || null
   } catch (error) {
     console.warn('读取本地数据失败', error)
     return null
@@ -24,13 +25,13 @@ function setStorage(state) {
 }
 
 function normalize(raw) {
-  if (!raw || raw.version !== SCHEMA_VERSION) return emptyState()
+  if (!raw || ![1, SCHEMA_VERSION].includes(raw.version)) return emptyState()
   return {
     version: SCHEMA_VERSION,
     hasOnboarded: Boolean(raw.hasOnboarded),
     activePatientId: raw.activePatientId || '',
     patients: Array.isArray(raw.patients) ? raw.patients : [],
-    events: Array.isArray(raw.events) ? raw.events : [],
+    events: Array.isArray(raw.events) ? raw.events.map(event => ({ ...event, report: event.report || null })) : [],
   }
 }
 
@@ -104,12 +105,15 @@ function saveEvent(input) {
   if (!state.patients.some(item => item.id === input.patientId)) throw new Error('请先选择有效的患者档案')
   const index = input.id ? state.events.findIndex(item => item.id === input.id) : -1
   if (input.id && index < 0) throw new Error('病程事件不存在')
+  const existing = index >= 0 ? state.events[index] : null
   const record = {
     id: input.id || uid('event'), patientId: input.patientId, date: input.date || '',
     type: input.type || 'other', title: String(input.title || '').trim(),
     description: String(input.description || '').trim(), hospital: String(input.hospital || '').trim(),
-    department: String(input.department || '').trim(), isDemo: index >= 0 ? Boolean(state.events[index].isDemo) : false,
-    createdAt: index >= 0 ? state.events[index].createdAt : now, updatedAt: now,
+    department: String(input.department || '').trim(), isDemo: existing ? Boolean(existing.isDemo) : false,
+    source: input.source || (existing && existing.source) || 'manual',
+    report: input.report === undefined ? ((existing && existing.report) || null) : input.report,
+    createdAt: existing ? existing.createdAt : now, updatedAt: now,
   }
   if (!record.date || !record.title) throw new Error('事件日期和标题不能为空')
   if (index >= 0) state.events.splice(index, 1, record); else state.events.push(record)

@@ -1,0 +1,33 @@
+<view class="page report-page" wx:if="{{patient}}">
+  <view class="page-title">识别检验报告</view>
+  <view class="page-subtitle">保存到：{{patient.nickname}} · {{patient.diseaseName}}</view>
+  <view class="step card">
+    <view class="step-title"><text>1</text>选择报告图片</view>
+    <view class="upload" bindtap="chooseImage">
+      <image wx:if="{{imagePath}}" src="{{imagePath}}" mode="aspectFit" />
+      <view wx:else><view class="upload-icon">＋</view><view>拍摄或从相册选择</view><view class="helper">请遮挡与本次整理无关的个人信息</view></view>
+    </view>
+    <checkbox-group bindchange="consentChange"><label class="consent"><checkbox value="upload" checked="{{consented}}" color="#197278" /><text>我同意将这张图片临时上传用于 OCR。识别完成后临时云文件会被删除。</text></label></checkbox-group>
+    <button class="primary-button" loading="{{recognizing}}" disabled="{{recognizing || !imagePath}}" bindtap="recognize">{{recognizing?'正在识别':'开始百度医疗 OCR'}}</button>
+    <button class="secondary-button demo-button" disabled="{{recognizing}}" bindtap="recognizeDemo">不上传图片，体验演示识别</button>
+  </view>
+  <view wx:if="{{result}}" class="step review">
+    <view class="step-title"><text>2</text>对照原报告逐项核对</view>
+    <view wx:if="{{result.isDemo}}" class="demo-banner">以下均为虚构演示数据，请勿作为真实病程使用。</view>
+    <label class="label required">报告名称</label><input class="field" value="{{result.reportTitle}}" data-field="reportTitle" bindinput="fieldInput" />
+    <label class="label required">报告日期</label><picker mode="date" end="{{maxDate}}" value="{{result.reportDate}}" bindchange="dateChange"><view class="field picker-field">{{result.reportDate}}</view></picker>
+    <label class="label">医院</label><input class="field" value="{{result.hospital}}" data-field="hospital" bindinput="fieldInput" />
+    <label class="label">科室</label><input class="field" value="{{result.department}}" data-field="department" bindinput="fieldInput" />
+    <label class="label">报告结论原文</label><textarea class="field" maxlength="500" value="{{result.summary}}" data-field="summary" bindinput="fieldInput" placeholder="如报告没有结论可留空" />
+    <view class="items-head"><view class="section-title">检验项目（{{result.items.length}}）</view><view bindtap="addItem">＋ 添加一项</view></view>
+    <view class="item-card card" wx:for="{{result.items}}" wx:key="_key">
+      <view class="item-head"><text>第 {{index + 1}} 项</text><text class="remove" data-index="{{index}}" bindtap="removeItem">移除</text></view>
+      <input class="field compact" placeholder="项目名称" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="itemInput" />
+      <view class="item-grid"><input class="field compact" placeholder="结果" value="{{item.result}}" data-index="{{index}}" data-field="result" bindinput="itemInput" /><input class="field compact" placeholder="单位" value="{{item.unit}}" data-index="{{index}}" data-field="unit" bindinput="itemInput" /></view>
+      <view class="item-grid"><input class="field compact" placeholder="参考区间" value="{{item.reference}}" data-index="{{index}}" data-field="reference" bindinput="itemInput" /><input class="field compact" placeholder="报告提示，如 ↑" value="{{item.hint}}" data-index="{{index}}" data-field="hint" bindinput="itemInput" /></view>
+    </view>
+    <view class="safe-note">OCR 可能漏字、错位或识别错误。这里仅转录报告，不解释指标、不判断异常，也不提供诊疗建议。</view>
+    <checkbox-group bindchange="reviewChange"><label class="consent final-check"><checkbox value="reviewed" checked="{{reviewed}}" color="#197278" /><text>我已对照原报告核对以上内容，确认后再保存。</text></label></checkbox-group>
+    <button class="primary-button" disabled="{{!reviewed}}" bindtap="save">确认并保存到时间线</button>
+  </view>
+</view>

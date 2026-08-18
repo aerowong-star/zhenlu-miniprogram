@@ -15,6 +15,7 @@
     <view class="action-grid">
       <view class="action primary" bindtap="addEvent"><view class="action-icon">＋</view><view><text class="action-title">记录病程</text><text>添加检查、就诊或用药事件</text></view></view>
       <view class="action" bindtap="goTimeline"><view class="action-icon pale">↗</view><view><text class="action-title">查看时间线</text><text>按时间回顾重要变化</text></view></view>
+      <view class="action report" bindtap="importReport"><view class="action-icon pale">▣</view><view><text class="action-title">识别检验报告</text><text>拍照提取后人工核对</text></view></view>
     </view>
     <view class="section-head"><view class="section-title">最近记录</view><view bindtap="goTimeline">查看全部</view></view>
     <view wx:if="{{recentEvents.length}}" class="card recent-list">

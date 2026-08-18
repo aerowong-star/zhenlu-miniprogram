@@ -1,12 +1,12 @@
-# 第一阶段数据模型
+# 第二阶段数据模型
 
-本阶段全部业务数据保存在本地存储 `zhenlu_phase1_state_v1` 中；首次启动会兼容读取旧品牌版本的 `hanlu_phase1_state_v1`。
+业务数据保存在本地键 `zhenlu_state_v2`。启动时兼容读取第一阶段的 `zhenlu_phase1_state_v1` 和旧品牌键 `hanlu_phase1_state_v1`，随后写入 v2。
 
 ## 根状态
 
 ```js
 {
-  version: 1,
+  version: 2,
   hasOnboarded: false,
   activePatientId: "",
   patients: [],
@@ -14,22 +14,9 @@
 }
 ```
 
-`version` 用于后续本地数据迁移。业务页面不直接读写存储，而是通过 `services/data-service.js` 操作。
-
 ## Patient
 
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| id | string | 本地唯一标识 |
-| nickname | string | 患者称呼，必填 |
-| birthYear | string | 出生年份，选填 |
-| relationship | string | 当前用户与患者关系 |
-| diseaseName | string | 医生已明确诊断的病种，必填 |
-| diagnosisDate | YYYY-MM-DD | 确诊日期 |
-| stage | string | 当前随访阶段 |
-| department | string | 主要复诊科室 |
-| isDemo | boolean | 是否为虚构示例数据 |
-| createdAt / updatedAt | ISO string | 创建和更新时间 |
+患者字段沿用第一阶段：`id`、`nickname`、`birthYear`、`relationship`、`diseaseName`、`diagnosisDate`、`stage`、`department`、`isDemo`、`createdAt`、`updatedAt`。
 
 ## TimelineEvent
 
@@ -37,21 +24,46 @@
 |---|---|---|
 | id | string | 本地唯一标识 |
 | patientId | string | 所属患者档案 |
-| date | YYYY-MM-DD | 事件发生日期，必填 |
-| type | enum | symptom / visit / hospital / test / diagnosis / medication / checkup / adverse / other |
-| title | string | 事件标题，必填 |
-| description | string | 事实性详细记录 |
-| hospital | string | 医院或机构 |
-| department | string | 科室 |
-| isDemo | boolean | 是否为虚构示例数据 |
+| date | YYYY-MM-DD | 事件日期 |
+| type | enum | 事件类型；OCR 报告使用 `test` |
+| title / description | string | 经用户确认的标题和事实记录 |
+| hospital / department | string | 医院与科室 |
+| source | string | `manual`、`ocr-demo` 或 `baidu-medical-ocr` |
+| report | object/null | 经人工核对的结构化报告 |
+| isDemo | boolean | 第一阶段示例事件标记 |
 | createdAt / updatedAt | ISO string | 创建和更新时间 |
 
-## 删除规则
+## Report
 
-- 删除患者档案时级联删除其全部病程事件。
-- 删除单条病程事件不会影响患者档案。
+```js
+{
+  provider: "baidu-medical-ocr",
+  providerLogId: "用于服务问题定位的日志 ID",
+  reviewed: true,
+  reviewedAt: "ISO 时间",
+  isDemo: false,
+  items: [
+    {
+      name: "项目名称",
+      code: "项目代号",
+      result: "结果原文",
+      unit: "单位原文",
+      reference: "参考区间原文",
+      hint: "报告原始提示符号"
+    }
+  ]
+}
+```
+
+报告图片和百度密钥均不进入本地状态。图片只作为临时 OCR 输入；事件中仅保存用户核对后的文字结果。
+
+## 删除与迁移
+
+- 删除患者时级联删除其全部病程事件和报告文字结果。
+- 删除事件时同时删除内嵌的报告结果。
 - 清除全部数据会恢复空状态和首次使用流程。
+- v1 事件迁移后自动补充 `report: null`，原有业务字段不变。
 
-## 第二阶段迁移建议
+## 后续云同步建议
 
-接入云数据库时保留当前字段含义，并新增 `ownerUserId`、授权记录和服务端版本字段。需要以新的 repository 接口替换本地存储实现，页面层不直接依赖云数据库 SDK。
+云同步阶段应新增 `ownerUserId`、授权记录、服务端版本和审计字段，并通过 repository 接口替换本地实现。图片若需要长期保存，必须另行设计明确授权、访问控制、保留期限和删除机制。

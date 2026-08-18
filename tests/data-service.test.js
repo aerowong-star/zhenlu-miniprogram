@@ -13,7 +13,7 @@ test.beforeEach(() => { global.wx._store = {} })
 
 test('bootstrap creates an empty versioned state', () => {
   const state = service.bootstrap()
-  assert.equal(state.version, 1)
+  assert.equal(state.version, 2)
   assert.equal(state.patients.length, 0)
 })
 
@@ -58,4 +58,27 @@ test('editing demo data preserves its demo marker', () => {
   service.saveEvent({ ...event, title:'修改后的示例事件' })
   assert.equal(service.getPatient(patient.id).isDemo, true)
   assert.equal(service.getEvent(event.id).isDemo, true)
+})
+
+test('phase 1 local data migrates to schema version 2', () => {
+  global.wx._store.zhenlu_phase1_state_v1 = {
+    version: 1, hasOnboarded: true, activePatientId: 'p1',
+    patients: [{ id: 'p1', nickname: '旧档案', diseaseName: '测试病种' }],
+    events: [{ id: 'e1', patientId: 'p1', date: '2026-01-01', title: '旧事件' }],
+  }
+  const state = service.bootstrap()
+  assert.equal(state.version, 2)
+  assert.equal(state.patients[0].nickname, '旧档案')
+  assert.equal(state.events[0].report, null)
+})
+
+test('OCR report details are stored with their timeline event', () => {
+  service.bootstrap()
+  const patient = service.savePatient({ nickname: '测试患者', diseaseName: '测试病种' })
+  const event = service.saveEvent({
+    patientId: patient.id, date: '2026-08-18', type: 'test', title: '检验报告', source: 'baidu-medical-ocr',
+    report: { reviewed: true, items: [{ name: '指标 A', result: '12.3', unit: 'U/L' }] },
+  })
+  assert.equal(service.getEvent(event.id).source, 'baidu-medical-ocr')
+  assert.equal(service.getEvent(event.id).report.items[0].name, '指标 A')
 })
