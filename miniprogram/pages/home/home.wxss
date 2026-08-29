@@ -9,6 +9,8 @@
 .meta-row text { display:block; font-size:22rpx; opacity:.65 }.meta-row .meta-value{margin-top:8rpx;font-size:27rpx;opacity:1;font-weight:650}
 .demo-ribbon { margin:26rpx -34rpx -34rpx; padding:14rpx 34rpx; background:rgba(255,255,255,.1); font-size:23rpx; }
 .action-grid { display:grid; grid-template-columns:1fr 1fr; gap:18rpx; margin-top:22rpx; }
+.action.report { grid-column:span 2; display:flex; align-items:center; gap:24rpx; }
+.action.report .action-title { margin-top:0; }
 .action { padding:26rpx 22rpx; border-radius:22rpx; background:#fff; border:1rpx solid #dfe8eb; }
 .action.primary { background:#e8f4f3; border-color:#c5e2df; }.action-icon{width:58rpx;height:58rpx;line-height:56rpx;text-align:center;border-radius:18rpx;background:#197278;color:#fff;font-size:36rpx}.action-icon.pale{background:#edf3f4;color:#197278}
 .action text{display:block}.action .action-title{margin-top:18rpx;font-size:28rpx;font-weight:650;color:#173042}.action text{margin-top:8rpx;color:#70828b;font-size:22rpx;line-height:1.5}

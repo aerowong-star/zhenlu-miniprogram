@@ -20,6 +20,10 @@ Page({
     if (!this.data.patient) return wx.navigateTo({ url: '/pages/patient-edit/patient-edit?first=1' })
     wx.navigateTo({ url: `/pages/event-edit/event-edit?patientId=${this.data.patient.id}` })
   },
+  importReport() {
+    if (!this.data.patient) return wx.navigateTo({ url: '/pages/patient-edit/patient-edit?first=1' })
+    wx.navigateTo({ url: `/pages/report-import/report-import?patientId=${this.data.patient.id}` })
+  },
   openEvent(e) { wx.navigateTo({ url: `/pages/event-detail/event-detail?id=${e.currentTarget.dataset.id}` }) },
 })
 

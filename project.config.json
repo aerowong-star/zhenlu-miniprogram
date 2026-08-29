@@ -1,6 +1,7 @@
 {
-  "description": "诊路：罕见病病程整理助手（第一阶段）",
+  "description": "诊路：罕见病病程整理助手（第二阶段）",
   "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
   "compileType": "miniprogram",
   "appid": "touristappid",
   "projectname": "zhenlu-miniprogram",
@@ -36,5 +37,6 @@
     "ignore": [],
     "include": []
   },
-  "editorSetting": {}
+  "editorSetting": {},
+  "libVersion": "3.17.0"
 }

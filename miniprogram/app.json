@@ -6,6 +6,7 @@
     "pages/patient-edit/patient-edit",
     "pages/timeline/timeline",
     "pages/event-edit/event-edit",
+    "pages/report-import/report-import",
     "pages/event-detail/event-detail",
     "pages/settings/settings"
   ],

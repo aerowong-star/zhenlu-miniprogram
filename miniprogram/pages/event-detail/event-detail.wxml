@@ -7,6 +7,19 @@
     <view class="detail-row"><text>科室</text><text class="detail-value">{{event.department || '未填写'}}</text></view>
     <view class="detail-row description"><text>详细记录</text><text class="detail-value">{{event.description || '未填写'}}</text></view>
   </view>
+  <block wx:if="{{event.report}}">
+    <view class="section-title">检验项目（{{event.report.items.length}}）</view>
+    <view class="report-card card">
+      <view class="report-row report-head"><text>项目</text><text>结果</text><text>参考区间</text></view>
+      <view class="report-row" wx:for="{{event.report.items}}" wx:key="index">
+        <text>{{item.name || item.code || '未命名'}}</text>
+        <text class="result {{item.hint?'flagged':''}}">{{item.result || '—'}} {{item.unit}}<text wx:if="{{item.hint}}"> {{item.hint}}</text></text>
+        <text>{{item.reference || '—'}}</text>
+      </view>
+    </view>
+    <view class="safe-note">以上内容来自 OCR 后的人工校对，仅用于整理原报告；报告提示不等于医学判断。</view>
+  </block>
+  <view wx:if="{{event.report && event.report.isDemo}}" class="demo-note">这份报告包含虚构演示指标，不代表真实医疗信息。</view>
   <view wx:if="{{event.isDemo}}" class="safe-note">这是一条虚构示例记录，不代表真实医疗信息。</view>
   <view class="button-row"><button class="secondary-button" bindtap="edit">编辑</button><button class="danger-button" bindtap="remove">删除</button></view>
 </view>
