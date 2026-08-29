@@ -2,6 +2,7 @@ const cloud = require('wx-server-sdk')
 const crypto = require('crypto')
 const https = require('https')
 const querystring = require('querystring')
+const { isTemporaryOcrFile } = require('./validation')
 
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 
@@ -65,17 +66,17 @@ async function consumeDailyQuota(openid) {
   let current = null
   try { current = (await doc.get()).data } catch (_) {}
   if (current && Number(current.count) >= DAILY_LIMIT) throw new Error(`今日识别次数已达到 ${DAILY_LIMIT} 次，请明天再试`)
-  await doc.set({ data: { _id: id, day, count: Number(current && current.count || 0) + 1, updatedAt: cloud.database().serverDate() } })
+  await doc.set({ data: { day, count: Number(current && current.count || 0) + 1, updatedAt: cloud.database().serverDate() } })
 }
 
 exports.main = async event => {
   const fileID = event && event.fileID
-  if (!fileID || typeof fileID !== 'string' || !fileID.startsWith('cloud://')) return { ok: false, message: '缺少有效的临时图片' }
+  if (!isTemporaryOcrFile(fileID)) return { ok: false, message: '缺少有效的 OCR 临时图片' }
   try {
     const context = cloud.getWXContext()
     await consumeDailyQuota(context.OPENID)
     const downloaded = await cloud.downloadFile({ fileID })
-    if (!downloaded.fileContent || downloaded.fileContent.length > MAX_RAW_BYTES) throw new Error('图片文件过大，请裁剪后重试')
+    if (!downloaded.fileContent || downloaded.fileContent.length > MAX_RAW_BYTES) throw new Error('图片自动优化后仍超过服务限制，请重新拍摄后重试')
     return { ok: true, data: await recognize(downloaded.fileContent) }
   } catch (error) {
     console.error('medical report OCR failed', { message: error.message })

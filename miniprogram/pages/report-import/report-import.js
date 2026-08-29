@@ -1,8 +1,7 @@
 const dataService = require('../../services/data-service')
 const ocrService = require('../../services/ocr-service')
+const imageProcessor = require('../../services/image-processor')
 const { today } = require('../../utils/date')
-
-const MAX_RAW_IMAGE_BYTES = 2.5 * 1024 * 1024
 
 function safeDate(value) {
   const match = String(value || '').match(/(20\d{2})[年./-](\d{1,2})[月./-](\d{1,2})/)
@@ -12,7 +11,7 @@ function safeDate(value) {
 
 Page({
   data: {
-    patient: null, imagePath: '', consented: false, recognizing: false,
+    patient: null, imagePath: '', consented: false, preparingImage: false, recognizing: false,
     reviewed: false, result: null, maxDate: today(),
   },
 
@@ -26,13 +25,25 @@ Page({
   },
 
   chooseImage() {
+    if (this.data.preparingImage || this.data.recognizing) return
     wx.chooseMedia({
       count: 1, mediaType: ['image'], sourceType: ['album', 'camera'], sizeType: ['compressed'],
-      success: response => {
+      success: async response => {
         const file = response.tempFiles && response.tempFiles[0]
         if (!file) return
-        if (file.size > MAX_RAW_IMAGE_BYTES) return wx.showToast({ title: '图片仍过大，请裁剪后重试', icon: 'none' })
-        this.setData({ imagePath: file.tempFilePath, result: null, reviewed: false })
+        this.setData({ preparingImage: true })
+        wx.showLoading({ title: '正在优化图片', mask: true })
+        let prepared = null
+        try {
+          prepared = await imageProcessor.prepareImageForOcr(file.tempFilePath)
+          this.setData({ imagePath: prepared.path, result: null, reviewed: false })
+        } catch (error) {
+          wx.showModal({ title: '图片处理未完成', content: error.message || '请重新选择报告图片', showCancel: false })
+        } finally {
+          wx.hideLoading()
+          this.setData({ preparingImage: false })
+        }
+        if (prepared && prepared.optimized) wx.showToast({ title: '图片已自动优化', icon: 'success' })
       },
     })
   },
