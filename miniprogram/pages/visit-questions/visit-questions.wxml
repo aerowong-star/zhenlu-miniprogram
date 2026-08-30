@@ -1,0 +1,16 @@
+<view class="page questions-page">
+  <view class="page-title">想咨询医生的问题</view>
+  <view class="page-subtitle">把容易忘记的问题提前写下来。模板只是沟通提示，不是医学建议。</view>
+  <view class="template-panel card">
+    <view class="template-title">常用问题模板</view>
+    <view class="helper">点击模板即可加入清单，不会占用你的空白输入框。</view>
+    <view class="template-list"><view class="template-chip {{item.selected ? 'selected' : ''}}" wx:for="{{templates}}" wx:key="id" data-index="{{index}}" bindtap="addTemplate">{{item.selected ? '✓ ' : '+ '}}{{item.content}}</view></view>
+  </view>
+  <view class="question card" wx:for="{{questions}}" wx:key="id">
+    <view class="question-head"><text>问题 {{index + 1}}</text><text class="remove" data-index="{{index}}" bindtap="remove">移除</text></view>
+    <textarea class="field" maxlength="200" placeholder="直接输入想在复诊时咨询的问题" value="{{item.content}}" data-index="{{index}}" bindinput="input" />
+  </view>
+  <view wx:if="{{!questions.length}}" class="card empty">还没有问题，可以直接添加空白问题或点击上方模板。</view>
+  <button class="secondary-button add-question" bindtap="add">＋ 添加一个问题</button>
+  <button class="primary-button next-button" bindtap="save">下一步：生成复诊摘要</button>
+</view>

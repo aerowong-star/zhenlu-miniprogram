@@ -2,7 +2,7 @@ const dataService = require('../../services/data-service')
 const { formatDate } = require('../../utils/date')
 
 Page({
-  data: { patient: null, recentEvents: [], patientCount: 0 },
+  data: { patient: null, recentEvents: [], patientCount: 0, nextVisit: null },
   onShow() { this.refresh() },
   refresh() {
     const state = dataService.getState()
@@ -12,7 +12,9 @@ Page({
       dataService.setActivePatient(state.patients[0].id); patient = state.patients[0]
     }
     const events = patient ? dataService.listEvents(patient.id).slice(0, 3).map(item => ({ ...item, displayDate: formatDate(item.date), typeLabel: typeLabel(item.type) })) : []
-    this.setData({ patient, recentEvents: events, patientCount: state.patients.length })
+    const visit = patient ? dataService.getNextVisitPlan(patient.id) : null
+    const nextVisit = visit ? { ...visit, displayDate: formatDate(visit.visitDate), materialCount: visit.selectedEventIds.length, questionCount: visit.questions.length } : null
+    this.setData({ patient, recentEvents: events, patientCount: state.patients.length, nextVisit })
   },
   goPatients() { wx.switchTab({ url: '/pages/patients/patients' }) },
   goTimeline() { wx.switchTab({ url: '/pages/timeline/timeline' }) },
@@ -23,6 +25,10 @@ Page({
   importReport() {
     if (!this.data.patient) return wx.navigateTo({ url: '/pages/patient-edit/patient-edit?first=1' })
     wx.navigateTo({ url: `/pages/report-import/report-import?patientId=${this.data.patient.id}` })
+  },
+  goVisitPlans() {
+    if (!this.data.patient) return wx.navigateTo({ url: '/pages/patient-edit/patient-edit?first=1' })
+    wx.navigateTo({ url: `/pages/visit-plans/visit-plans?patientId=${this.data.patient.id}` })
   },
   openEvent(e) { wx.navigateTo({ url: `/pages/event-detail/event-detail?id=${e.currentTarget.dataset.id}` }) },
 })

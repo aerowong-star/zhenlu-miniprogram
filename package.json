@@ -1,11 +1,11 @@
 {
   "name": "zhenlu-miniprogram",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
-  "description": "诊路微信小程序第二阶段：患者档案、病程时间线与检验报告 OCR 人工校对",
+  "description": "诊路微信小程序第三阶段：病程整理、报告 OCR 与脱敏复诊摘要",
   "scripts": {
     "test": "node --test tests/*.test.js",
-    "check": "node --check miniprogram/services/data-service.js && node --check miniprogram/services/demo-service.js && node --check miniprogram/services/image-processor.js && node --check miniprogram/services/ocr-normalizer.js && node --check miniprogram/services/ocr-service.js && node --check miniprogram/pages/report-import/report-import.js && node --check cloudfunctions/recognizeMedicalReport/index.js && node --check cloudfunctions/recognizeMedicalReport/validation.js && node --check miniprogram/utils/date.js"
+    "check": "node --check miniprogram/services/data-service.js && node --check miniprogram/services/demo-service.js && node --check miniprogram/services/image-processor.js && node --check miniprogram/services/ocr-normalizer.js && node --check miniprogram/services/ocr-service.js && node --check miniprogram/services/visit-summary.js && node --check miniprogram/pages/report-import/report-import.js && node --check miniprogram/pages/visit-plans/visit-plans.js && node --check miniprogram/pages/visit-edit/visit-edit.js && node --check miniprogram/pages/visit-materials/visit-materials.js && node --check miniprogram/pages/visit-questions/visit-questions.js && node --check miniprogram/pages/visit-summary/visit-summary.js && node --check cloudfunctions/recognizeMedicalReport/index.js && node --check cloudfunctions/recognizeMedicalReport/validation.js && node --check miniprogram/utils/date.js"
   },
   "engines": {
     "node": ">=18"
