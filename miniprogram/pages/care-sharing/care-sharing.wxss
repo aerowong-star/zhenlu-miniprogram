@@ -1,0 +1,11 @@
+.top-actions { margin-top:28rpx; }
+.share-card { margin-top:18rpx; }
+.share-card.inactive { opacity:.62; }
+.share-top { display:flex; justify-content:space-between; gap:20rpx; align-items:flex-start; }
+.share-name { font-size:32rpx; font-weight:700; }
+.disease { margin-top:8rpx; color:#56717d; }
+.meta { margin-top:14rpx; color:#71848e; font-size:25rpx; line-height:1.5; }
+.card-actions { display:flex; justify-content:flex-end; gap:34rpx; margin-top:22rpx; padding-top:20rpx; border-top:1rpx solid #e7edef; color:#197278; font-size:26rpx; }
+.card-actions .remove { color:#b74444; }
+.open { color:#197278; font-weight:600; }
+.error-note { background:#fff1f1; color:#923d3d; }

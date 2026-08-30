@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "openapi": []
+  },
+  "timeout": 15,
+  "triggers": [
+    {
+      "name": "cleanupCareInvitesDaily",
+      "type": "timer",
+      "config": "0 0 3 * * * *"
+    }
+  ]
+}

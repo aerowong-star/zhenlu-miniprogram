@@ -56,3 +56,37 @@
 - 恢复会整体覆盖当前本机业务数据，界面必须二次确认；
 - 清除本地数据与删除云端备份是两个独立操作；
 - 云端删除完成后无法从该备份恢复。
+
+## 第五阶段照护协作模型
+
+照护协作不改变本地 v4 数据结构，而是生成字段最小化的只读快照。共享快照不会包含出生年份、关系字段、报告图片、服务密钥或本机同步信息。
+
+```js
+{
+  version: 1,
+  generatedAt: "ISO 时间",
+  patient: { id, nickname, diseaseName, diagnosisDate, stage, department },
+  events: [],
+  visitPlans: []
+}
+```
+
+`nickname` 默认是空字符串；只有管理者明确开启后才出现。`events` 和 `visitPlans` 根据授权范围生成，`report` 默认是 `null`。检验明细开启时，只保留人工核对后的文字项目，不保留任何图片路径。
+
+### care_invites
+
+- 文档 ID：12 位邀请码的不可逆摘要；
+- `ownerHash`：当前微信身份的不可逆摘要；
+- `caregiverLabel`、`scopes`、`snapshot`；
+- `createdAt`、`expiresAt` 和 `status`。
+
+邀请码只能使用一次，接受后立即删除；管理者也可主动取消。过期文档由定时清理函数删除。
+
+### care_grants
+
+- 文档 ID：管理者、照护者和患者标识组合后的不可逆摘要；
+- `ownerHash`、`caregiverHash`；
+- `caregiverLabel`、`scopes`、`snapshot`；
+- `status`、`createdAt`、`updatedAt`。
+
+客户端不能提交或选择用户身份。云函数只允许管理者刷新或撤销快照，只允许对应照护者读取或退出。撤销、退出时直接删除授权文档及其共享快照。

@@ -1,0 +1,13 @@
+.patient-card { margin-top:28rpx; }
+.disease { font-size:36rpx; font-weight:700; color:#197278; }
+.patient-meta text { display:block; margin-top:13rpx; color:#617680; }
+.event-card, .visit-card { margin-top:18rpx; }
+.record-top { display:flex; justify-content:space-between; gap:20rpx; }
+.record-title { font-weight:700; }
+.record-date { color:#197278; font-size:24rpx; white-space:nowrap; }
+.record-copy { margin-top:16rpx; color:#415c68; line-height:1.7; }
+.record-meta { margin-top:14rpx; color:#7a8c95; font-size:24rpx; }
+.report-list, .question-list { margin-top:20rpx; padding-top:16rpx; border-top:1rpx solid #e7edef; }
+.report-row { display:flex; justify-content:space-between; gap:20rpx; padding:9rpx 0; font-size:24rpx; }
+.question-list view { margin-top:9rpx; color:#526b77; font-size:25rpx; line-height:1.6; }
+.error { color:#a33a3a; }

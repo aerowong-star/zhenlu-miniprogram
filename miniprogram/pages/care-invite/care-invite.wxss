@@ -1,0 +1,12 @@
+.scope-card { padding-top:10rpx; padding-bottom:10rpx; }
+.scope-row { display:flex; align-items:center; justify-content:space-between; gap:20rpx; padding:24rpx 0; border-bottom:1rpx solid #e7edef; }
+.scope-row:last-child { border-bottom:0; }
+.scope-row text { display:block; }
+.scope-row view text:first-child { font-weight:650; }
+.scope-row view text:last-child { margin-top:7rpx; color:#71848e; font-size:23rpx; line-height:1.5; }
+.submit { margin-top:34rpx; }
+.result-card { margin-top:34rpx; text-align:center; }
+.result-title, .invite-code, .expires { display:block; }
+.result-title { font-size:34rpx; font-weight:700; }
+.invite-code { margin:32rpx 0 16rpx; color:#197278; font-size:48rpx; font-weight:750; letter-spacing:4rpx; }
+.expires { margin-bottom:30rpx; color:#71848e; font-size:24rpx; }

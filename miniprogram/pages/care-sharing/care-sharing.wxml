@@ -1,0 +1,40 @@
+<view class="page">
+  <view class="page-title">照护者协作</view>
+  <view class="page-subtitle">通过一次性邀请码建立只读授权；只有档案管理者可以更新或撤销共享内容。</view>
+  <view class="button-row top-actions">
+    <button class="primary-button" bindtap="createInvite">邀请照护者</button>
+    <button class="secondary-button" bindtap="acceptInvite">输入邀请码</button>
+  </view>
+  <view wx:if="{{errorMessage}}" class="safe-note error-note">{{errorMessage}}。请确认已部署第五阶段云函数和数据库集合。</view>
+
+  <view class="section-title">待接受邀请（{{pending.length}}）</view>
+  <view wx:if="{{pending.length}}">
+    <view class="card share-card" wx:for="{{pending}}" wx:key="id">
+      <view class="share-top"><view><view class="share-name">{{item.patientLabel}}</view><view class="disease">{{item.diseaseName}}</view></view><text class="tag">等待接受</text></view>
+      <view class="meta">对象：{{item.caregiverLabel}}</view><view class="meta">范围：{{item.scopeLabel}}</view><view class="meta">有效至：{{item.expiresLabel}}</view>
+      <view class="card-actions"><text class="remove" data-id="{{item.id}}" bindtap="cancelInvite">取消邀请码</text></view>
+    </view>
+  </view>
+  <view wx:else class="card empty">暂无等待接受的邀请码。</view>
+
+  <view class="section-title">我管理的授权（{{owned.length}}）</view>
+  <view wx:if="{{owned.length}}">
+    <view class="card share-card {{item.status !== 'active' ? 'inactive' : ''}}" wx:for="{{owned}}" wx:key="id">
+      <view class="share-top"><view><view class="share-name">{{item.patientLabel}}</view><view class="disease">{{item.diseaseName}}</view></view><text class="tag">{{item.statusLabel}}</text></view>
+      <view class="meta">对象：{{item.caregiverLabel}}</view><view class="meta">范围：{{item.scopeLabel}}</view><view class="meta">更新：{{item.updatedLabel}}</view>
+      <view wx:if="{{item.status === 'active'}}" class="card-actions"><text data-id="{{item.id}}" bindtap="refreshGrant">更新内容</text><text class="remove" data-id="{{item.id}}" bindtap="revoke">撤销授权</text></view>
+    </view>
+  </view>
+  <view wx:else class="card empty">还没有照护者授权。创建邀请码后，由对方使用自己的微信接受。</view>
+
+  <view class="section-title">别人共享给我（{{received.length}}）</view>
+  <view wx:if="{{received.length}}">
+    <view class="card share-card" wx:for="{{received}}" wx:key="id" data-id="{{item.id}}" bindtap="openGrant">
+      <view class="share-top"><view><view class="share-name">{{item.patientLabel}}</view><view class="disease">{{item.diseaseName}}</view></view><text class="open">查看 ›</text></view>
+      <view class="meta">范围：{{item.scopeLabel}}</view><view class="meta">更新：{{item.updatedLabel}}</view>
+      <view class="card-actions"><text class="remove" data-id="{{item.id}}" catchtap="leaveGrant">退出共享</text></view>
+    </view>
+  </view>
+  <view wx:else class="card empty">暂无别人共享给你的档案。</view>
+  <view class="safe-note">共享内容只能查看，不能写入你的本地档案，也不能用于诊断、治疗或用药判断。</view>
+</view>

@@ -1,0 +1,9 @@
+.code-input { margin-top:8rpx; font-size:34rpx; letter-spacing:3rpx; text-transform:uppercase; }
+.verify-button { width:100%; margin-top:24rpx; }
+.preview-card { margin-top:28rpx; }
+.preview-title { display:block; margin-bottom:16rpx; font-size:32rpx; font-weight:700; }
+.preview-row { display:flex; justify-content:space-between; gap:24rpx; padding:10rpx 0; color:#71848e; font-size:25rpx; }
+.preview-row text:last-child { color:#173042; text-align:right; }
+.consent-card { display:block; margin-top:26rpx; padding-top:22rpx; border-top:1rpx solid #e7edef; }
+.consent-card label { display:flex; align-items:flex-start; gap:16rpx; color:#526b77; font-size:25rpx; line-height:1.65; }
+.accept-button { margin-top:30rpx; }
