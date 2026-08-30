@@ -13,6 +13,10 @@
     "pages/visit-materials/visit-materials",
     "pages/visit-questions/visit-questions",
     "pages/visit-summary/visit-summary",
+    "pages/care-sharing/care-sharing",
+    "pages/care-invite/care-invite",
+    "pages/care-accept/care-accept",
+    "pages/care-shared-detail/care-shared-detail",
     "pages/settings/settings"
   ],
   "window": {

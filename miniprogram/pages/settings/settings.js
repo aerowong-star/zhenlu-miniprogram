@@ -128,6 +128,8 @@ Page({
     }
   },
 
+  openCareSharing() { wx.navigateTo({ url: '/pages/care-sharing/care-sharing' }) },
+
   loadDemo() {
     wx.showModal({
       title: '重新载入示例？', content: '现有的示例档案、病程和复诊计划会被替换，你创建的其他数据不受影响。',

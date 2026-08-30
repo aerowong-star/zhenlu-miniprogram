@@ -1,0 +1,26 @@
+<view class="page">
+  <view class="page-title">邀请照护者</view>
+  <view class="page-subtitle">邀请码只能使用一次。请先确认共享对象和范围，再通过可信的私聊渠道发送。</view>
+  <view wx:if="{{!inviteCode}}">
+    <label class="label required">患者档案</label>
+    <picker range="{{patients}}" range-key="nickname" value="{{patientIndex}}" bindchange="patientChange"><view class="field picker-field">{{patients.length ? patients[patientIndex].nickname : '请先创建患者档案'}}</view></picker>
+    <label class="label">照护者称呼</label><input class="field" maxlength="20" placeholder="例如：妈妈、配偶（仅用于授权列表）" value="{{caregiverLabel}}" bindinput="labelInput" />
+    <view class="section-title">共享范围</view>
+    <view class="card scope-card">
+      <view class="scope-row"><view><text>疾病概况</text><text>病种、阶段和主要科室，始终包含</text></view><switch checked disabled color="#197278" /></view>
+      <view class="scope-row"><view><text>显示患者称呼</text><text>默认隐藏，建议仅在确有需要时开启</text></view><switch checked="{{scopes.showNickname}}" data-field="showNickname" bindchange="scopeChange" color="#197278" /></view>
+      <view class="scope-row"><view><text>病程记录</text><text>检查、就诊和用药事件的文字内容</text></view><switch checked="{{scopes.includeTimeline}}" data-field="includeTimeline" bindchange="scopeChange" color="#197278" /></view>
+      <view class="scope-row"><view><text>检验明细</text><text>包含 OCR 后人工核对的检验项目，需先共享病程</text></view><switch checked="{{scopes.includeReports}}" disabled="{{!scopes.includeTimeline}}" data-field="includeReports" bindchange="scopeChange" color="#197278" /></view>
+      <view class="scope-row"><view><text>复诊计划</text><text>复诊目的、问题清单和时间安排</text></view><switch checked="{{scopes.includeVisits}}" data-field="includeVisits" bindchange="scopeChange" color="#197278" /></view>
+    </view>
+    <label class="label">邀请码有效期</label>
+    <picker range="{{expiryOptions}}" value="{{expiryIndex}}" bindchange="expiryChange"><view class="field picker-field">{{expiryOptions[expiryIndex]}}</view></picker>
+    <button class="primary-button submit" loading="{{loading}}" disabled="{{loading || !patients.length}}" bindtap="submit">创建一次性邀请码</button>
+  </view>
+  <view wx:else class="card result-card">
+    <text class="result-title">邀请码已创建</text><text class="invite-code">{{inviteCode}}</text>
+    <text class="expires">有效至：{{expiresLabel}}</text>
+    <button class="primary-button" bindtap="copyCode">复制邀请码</button>
+    <view class="safe-note">任何获得邀请码的人都可尝试接受，请只发送给预定照护者。接受一次后邀请码立即失效。</view>
+  </view>
+</view>

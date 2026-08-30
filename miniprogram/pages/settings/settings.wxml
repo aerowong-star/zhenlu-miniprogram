@@ -1,6 +1,6 @@
 <view class="page">
   <view class="page-title">设置与说明</view>
-  <view class="page-subtitle">数据默认保存在本机；仅在你主动识别报告或操作个人云备份时使用云服务。</view>
+  <view class="page-subtitle">数据默认保存在本机；仅在你主动识别报告、操作个人云备份或授权照护协作时使用云服务。</view>
   <view class="section-title">数据概览</view>
   <view class="stats">
     <view class="card"><text class="stat-value">{{patientCount}}</text><text>患者档案</text></view>
@@ -24,14 +24,19 @@
     <button wx:if="{{cloudExists}}" class="cloud-delete" disabled="{{cloudLoading}}" bindtap="deleteCloudBackup">删除云端备份</button>
   </view>
 
+  <view class="section-title">照护者协作</view>
+  <view class="setting card" bindtap="openCareSharing">
+    <view><text class="setting-title">管理只读共享授权</text><text>一次性邀请码、最小共享范围和随时撤销</text></view><view>›</view>
+  </view>
+
   <view class="section-title">体验数据</view>
   <view class="setting card" bindtap="loadDemo"><view><text class="setting-title">重新载入示例病例</text><text>不会删除你自己创建的档案</text></view><view>›</view></view>
   <view class="section-title">产品边界</view>
   <view class="card copy">
-    <text class="copy-title">当前版本可以做什么</text><text>建立患者档案、记录病程、识别并人工核对检验报告、生成脱敏复诊摘要，并由用户主动备份到自己的微信身份。</text>
-    <text class="copy-title later">当前版本不做什么</text><text>不解释检验指标，不提供诊断、病情判断、治疗或用药建议，也不支持照护者共享。</text>
+    <text class="copy-title">当前版本可以做什么</text><text>建立患者档案、整理病程和复诊摘要、个人云备份，并通过一次性邀请码建立可撤销的照护者只读授权。</text>
+    <text class="copy-title later">当前版本不做什么</text><text>不解释检验指标，不提供诊断、病情判断、治疗或用药建议，也不提供公开分享链接或照护者编辑权限。</text>
   </view>
   <view class="section-title danger-title">危险操作</view>
   <button class="danger-button" bindtap="reset">清除全部本地数据</button>
-  <view class="version">诊路 Phase 4 · v0.4.0</view>
+  <view class="version">诊路 Phase 5 · v0.5.0</view>
 </view>

@@ -1,0 +1,36 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="card empty">正在加载共享内容…</view>
+  <view wx:elif="{{errorMessage}}" class="card empty error">{{errorMessage}}</view>
+  <block wx:elif="{{patient}}">
+    <view class="page-title">{{patient.nickname || '共享患者档案'}}</view>
+    <view class="page-subtitle">只读共享快照 · 管理者更新后内容才会变化</view>
+    <view class="card patient-card">
+      <view class="disease">{{patient.diseaseName || '病种待补充'}}</view>
+      <view class="patient-meta"><text>阶段：{{patient.stage || '待补充'}}</text><text>科室：{{patient.department || '待补充'}}</text><text>确诊日期：{{patient.diagnosisDate || '待补充'}}</text></view>
+    </view>
+
+    <view wx:if="{{grant.scopes.includeTimeline}}" class="section-title">病程记录（{{events.length}}）</view>
+    <view wx:if="{{grant.scopes.includeTimeline && events.length}}">
+      <view class="card event-card" wx:for="{{events}}" wx:key="id" wx:for-item="event">
+        <view class="record-top"><text class="record-title">{{event.title}}</text><text class="record-date">{{event.displayDate}}</text></view>
+        <view wx:if="{{event.description}}" class="record-copy">{{event.description}}</view>
+        <view wx:if="{{event.hospital || event.department}}" class="record-meta">{{event.hospital || '医院待补充'}} · {{event.department || '科室待补充'}}</view>
+        <view wx:if="{{event.report && event.report.items.length}}" class="report-list">
+          <view class="report-row" wx:for="{{event.report.items}}" wx:key="index" wx:for-item="reportItem"><text>{{reportItem.name}}</text><text>{{reportItem.result}} {{reportItem.unit}}</text></view>
+        </view>
+      </view>
+    </view>
+    <view wx:elif="{{grant.scopes.includeTimeline}}" class="card empty">暂无共享病程记录。</view>
+
+    <view wx:if="{{grant.scopes.includeVisits}}" class="section-title">复诊计划（{{visitPlans.length}}）</view>
+    <view wx:if="{{grant.scopes.includeVisits && visitPlans.length}}">
+      <view class="card visit-card" wx:for="{{visitPlans}}" wx:key="id" wx:for-item="plan">
+        <view class="record-top"><text class="record-title">{{plan.purpose}}</text><text class="record-date">{{plan.displayDate}}</text></view>
+        <view class="record-meta">{{plan.hospital || '医院待补充'}} · {{plan.department || '科室待补充'}}</view>
+        <view wx:if="{{plan.questions.length}}" class="question-list"><view wx:for="{{plan.questions}}" wx:key="index" wx:for-item="question">• {{question.content}}</view></view>
+      </view>
+    </view>
+    <view wx:elif="{{grant.scopes.includeVisits}}" class="card empty">暂无共享复诊计划。</view>
+    <view class="safe-note">此页面仅展示档案管理者授权的只读信息，不替代医生诊断和专业医疗意见。</view>
+  </block>
+</view>

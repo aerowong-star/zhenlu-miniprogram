@@ -1,0 +1,20 @@
+<view class="page">
+  <view class="page-title">接受照护邀请</view>
+  <view class="page-subtitle">请输入档案管理者私下发送的一次性邀请码。不要使用来源不明的邀请码。</view>
+  <label class="label required">12 位邀请码</label>
+  <input class="field code-input" maxlength="14" placeholder="例如：ABCD-EFGH-JK23" value="{{code}}" bindinput="codeInput" />
+  <button wx:if="{{!preview}}" class="secondary-button verify-button" loading="{{loading}}" disabled="{{loading}}" bindtap="verify">验证邀请码并查看范围</button>
+
+  <view wx:if="{{preview}}" class="card preview-card">
+    <text class="preview-title">邀请内容</text>
+    <view class="preview-row"><text>共享对象</text><text>{{preview.caregiverLabel}}</text></view>
+    <view class="preview-row"><text>患者档案</text><text>{{preview.patientLabel}}</text></view>
+    <view class="preview-row"><text>病种</text><text>{{preview.diseaseName}}</text></view>
+    <view class="preview-row"><text>共享范围</text><text>{{preview.scopeLabel}}</text></view>
+    <label class="consent-card">
+      <checkbox-group bindchange="consentChange"><label><checkbox value="accepted" checked="{{consented}}" color="#197278" /><text>我确认仅以照护协作为目的查看，并知悉内容不构成诊断、治疗或用药建议。</text></label></checkbox-group>
+    </label>
+    <button class="primary-button accept-button" loading="{{loading}}" disabled="{{loading}}" bindtap="accept">接受只读授权</button>
+  </view>
+  <view class="safe-note">接受后，共享内容保存在云端，不会自动导入或覆盖你的本地患者档案。档案管理者可以随时更新或撤销访问。</view>
+</view>
