@@ -1,19 +1,23 @@
 const { demoPatient, demoEvents, demoVisitPlans, DEMO_PATIENT_ID } = require('./demo-service')
 const { compareDateDesc } = require('../utils/date')
 
-const STORAGE_KEY = 'zhenlu_state_v3'
+const STORAGE_KEY = 'zhenlu_state_v4'
+const PHASE3_STORAGE_KEY = 'zhenlu_state_v3'
 const PHASE2_STORAGE_KEY = 'zhenlu_state_v2'
 const PHASE1_STORAGE_KEY = 'zhenlu_phase1_state_v1'
 const LEGACY_STORAGE_KEY = 'hanlu_phase1_state_v1'
-const SCHEMA_VERSION = 3
+const SCHEMA_VERSION = 4
+const MAX_BACKUP_BYTES = 750 * 1024
+
+function emptySyncState() { return { lastBackupAt: '', lastRestoreAt: '', cloudUpdatedAt: '' } }
 
 function emptyState() {
-  return { version: SCHEMA_VERSION, hasOnboarded: false, activePatientId: '', patients: [], events: [], visitPlans: [] }
+  return { version: SCHEMA_VERSION, hasOnboarded: false, activePatientId: '', patients: [], events: [], visitPlans: [], sync: emptySyncState() }
 }
 
 function getStorage() {
   try {
-    return wx.getStorageSync(STORAGE_KEY) || wx.getStorageSync(PHASE2_STORAGE_KEY) || wx.getStorageSync(PHASE1_STORAGE_KEY) || wx.getStorageSync(LEGACY_STORAGE_KEY) || null
+    return wx.getStorageSync(STORAGE_KEY) || wx.getStorageSync(PHASE3_STORAGE_KEY) || wx.getStorageSync(PHASE2_STORAGE_KEY) || wx.getStorageSync(PHASE1_STORAGE_KEY) || wx.getStorageSync(LEGACY_STORAGE_KEY) || null
   } catch (error) {
     console.warn('读取本地数据失败', error)
     return null
@@ -26,7 +30,7 @@ function setStorage(state) {
 }
 
 function normalize(raw) {
-  if (!raw || ![1, 2, SCHEMA_VERSION].includes(raw.version)) return emptyState()
+  if (!raw || ![1, 2, 3, SCHEMA_VERSION].includes(raw.version)) return emptyState()
   return {
     version: SCHEMA_VERSION,
     hasOnboarded: Boolean(raw.hasOnboarded),
@@ -42,6 +46,7 @@ function normalize(raw) {
       sourceSignature: plan.sourceSignature || '',
       confirmedAt: plan.confirmedAt || '',
     })) : [],
+    sync: { ...emptySyncState(), ...(raw.sync || {}) },
   }
 }
 
@@ -205,6 +210,67 @@ function confirmVisitSummary(id, snapshot, sourceSignature, privacyOptions) {
 function deleteVisitPlan(id) {
   const state = getState(); state.visitPlans = state.visitPlans.filter(item => item.id !== id); return setStorage(state)
 }
+
+function clonePlain(value) { return JSON.parse(JSON.stringify(value)) }
+
+function exportBackupPayload() {
+  const state = getState()
+  const payload = {
+    schemaVersion: SCHEMA_VERSION,
+    exportedAt: new Date().toISOString(),
+    data: clonePlain({
+      hasOnboarded: state.hasOnboarded, activePatientId: state.activePatientId,
+      patients: state.patients, events: state.events, visitPlans: state.visitPlans,
+    }),
+  }
+  if (byteLength(JSON.stringify(payload)) > MAX_BACKUP_BYTES) throw new Error('当前数据超过云备份大小限制，请减少不必要的历史记录')
+  return payload
+}
+
+function byteLength(value) {
+  if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(value).length
+  return unescape(encodeURIComponent(value)).length
+}
+
+function validateBackupPayload(payload) {
+  if (!payload || ![3, SCHEMA_VERSION].includes(payload.schemaVersion) || !payload.data) throw new Error('云端备份格式不受支持')
+  const data = payload.data
+  if (!Array.isArray(data.patients) || !Array.isArray(data.events) || !Array.isArray(data.visitPlans)) throw new Error('云端备份数据不完整')
+  if (data.patients.length > 20 || data.events.length > 5000 || data.visitPlans.length > 500) throw new Error('云端备份记录数量异常')
+  if (byteLength(JSON.stringify(payload)) > MAX_BACKUP_BYTES) throw new Error('云端备份文件过大')
+  const patientIds = new Set(data.patients.map(item => item && item.id).filter(Boolean))
+  if (patientIds.size !== data.patients.length) throw new Error('云端患者档案标识无效')
+  const eventOwners = new Map()
+  for (const event of data.events) {
+    if (!event || !event.id || !patientIds.has(event.patientId) || eventOwners.has(event.id)) throw new Error('云端病程数据关联无效')
+    eventOwners.set(event.id, event.patientId)
+  }
+  const planIds = new Set()
+  for (const plan of data.visitPlans) {
+    if (!plan || !plan.id || planIds.has(plan.id) || !patientIds.has(plan.patientId)) throw new Error('云端复诊计划关联无效')
+    if (!Array.isArray(plan.selectedEventIds) || plan.selectedEventIds.some(id => eventOwners.get(id) !== plan.patientId)) throw new Error('云端复诊材料关联无效')
+    planIds.add(plan.id)
+  }
+  if (data.activePatientId && !patientIds.has(data.activePatientId)) throw new Error('云端当前患者档案无效')
+  return true
+}
+
+function restoreBackupPayload(payload, cloudUpdatedAt = '') {
+  validateBackupPayload(payload)
+  const restored = normalize({ version: payload.schemaVersion, ...clonePlain(payload.data) })
+  restored.sync = { ...emptySyncState(), lastRestoreAt: new Date().toISOString(), cloudUpdatedAt: String(cloudUpdatedAt || '') }
+  return setStorage(restored)
+}
+
+function markCloudBackup(updatedAt) {
+  const state = getState(); const now = new Date().toISOString()
+  state.sync = { ...state.sync, lastBackupAt: now, cloudUpdatedAt: String(updatedAt || '') }
+  return setStorage(state)
+}
+
+function markCloudBackupDeleted() {
+  const state = getState(); state.sync = { ...state.sync, cloudUpdatedAt: '' }; return setStorage(state)
+}
 function resetAll() { return setStorage(emptyState()) }
 
 module.exports = {
@@ -212,4 +278,5 @@ module.exports = {
   listPatients, getPatient, savePatient, deletePatient, setActivePatient, getActivePatient,
   listEvents, getEvent, saveEvent, deleteEvent, resetAll,
   listVisitPlans, getVisitPlan, getNextVisitPlan, saveVisitPlan, confirmVisitSummary, deleteVisitPlan,
+  exportBackupPayload, validateBackupPayload, restoreBackupPayload, markCloudBackup, markCloudBackupDeleted,
 }
