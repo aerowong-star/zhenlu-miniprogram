@@ -1,79 +1,58 @@
-# 第三阶段数据模型
+# 第四阶段数据模型
 
-业务数据保存在本地键 `zhenlu_state_v3`。启动时兼容读取第二阶段的 `zhenlu_state_v2`、第一阶段的 `zhenlu_phase1_state_v1` 和旧品牌键 `hanlu_phase1_state_v1`，随后写入 v3。
+业务数据保存在本地键 `zhenlu_state_v4`。启动时兼容读取 v1、v2 和 v3 数据，随后写入 v4；原有患者、病程、OCR 核对结果和复诊计划保持不变。
 
 ## 根状态
 
 ```js
 {
-  version: 3,
+  version: 4,
   hasOnboarded: false,
   activePatientId: "",
   patients: [],
   events: [],
-  visitPlans: []
+  visitPlans: [],
+  sync: {
+    lastBackupAt: "",
+    lastRestoreAt: "",
+    cloudUpdatedAt: ""
+  }
 }
 ```
 
-## Patient 与 TimelineEvent
+`sync` 只记录本机界面所需的同步时间，不上传到云端。患者、病程事件、复诊计划及第三阶段摘要结构保持原定义。
 
-患者字段沿用第一阶段。病程事件沿用第二阶段并继续支持经人工核对的 `report` 结构。报告图片和百度密钥不进入本地状态；事件中只保存用户确认后的文字结果。
-
-## VisitPlan
+## 云端备份包
 
 ```js
 {
-  id: "visit_xxx",
-  patientId: "patient_xxx",
-  visitDate: "2026-09-20",
-  hospital: "示例医院",
-  department: "遗传代谢科",
-  doctor: "",
-  purpose: "本次希望沟通的事项",
-  selectedEventIds: ["event_xxx"],
-  questions: [{ id: "question_xxx", content: "下一次需要复查哪些项目？", answered: false, note: "" }],
-  status: "draft",
-  privacyOptions: null,
-  summarySnapshot: null,
-  sourceSignature: "",
-  confirmedAt: "",
-  isDemo: false,
-  createdAt: "ISO 时间",
-  updatedAt: "ISO 时间"
+  schemaVersion: 4,
+  exportedAt: "ISO 时间",
+  data: {
+    hasOnboarded: true,
+    activePatientId: "patient_xxx",
+    patients: [],
+    events: [],
+    visitPlans: []
+  }
 }
 ```
 
-`selectedEventIds` 只允许引用同一患者档案中的病程事件。删除病程事件时，相关复诊计划会自动移除该引用并取消摘要确认状态。
+云函数以当前微信上下文中的 OpenID 计算不可逆的 128 位摘要文档标识。数据库文档只保存 `schemaVersion`、`payload` 和 `updatedAt`，不保存明文 OpenID。客户端无法指定要读取或覆盖的用户。
 
-## 摘要确认
+## 完整性约束
 
-摘要由患者档案、复诊计划、所选事件、问题清单和隐私选项共同生成。用户确认时保存：
+- 患者、事件和复诊计划的 `id` 在各自集合内必须唯一；
+- 事件必须引用备份内存在的患者；
+- 复诊计划必须引用备份内存在的患者；
+- `selectedEventIds` 只能引用同一患者的事件；
+- `activePatientId` 为空，或指向备份内存在的患者；
+- 恢复前由小程序再次执行同样的关联校验；
+- 单份 JSON 备份不超过 750 KiB。
 
-- `summarySnapshot`：当时看到的结构化摘要快照；
-- `sourceSignature`：摘要来源内容的确定性签名；
-- `privacyOptions`：本次确认使用的显示范围；
-- `confirmedAt`：用户确认时间；
-- `status: "ready"`：当前摘要可以复制使用。
+## 删除与覆盖
 
-任一来源内容或隐私选项发生变化，重新计算的签名会不同，界面必须要求用户再次确认。编辑计划、材料或问题时会主动清除旧快照。
-
-## 默认隐私规则
-
-- 患者称呼默认隐藏；
-- 出生年份默认隐藏；
-- 医院信息默认显示，可由用户关闭；
-- 疾病名称、阶段和主要科室作为复诊沟通核心内容保留；
-- 不保存身份证号、手机号、家庭住址或报告图片；
-- 复制前必须完成一次明确确认。
-
-## 删除与迁移
-
-- 删除患者时级联删除其病程事件和复诊计划；
-- 删除事件时清理所有复诊计划中的相应引用；
-- 删除复诊计划不影响原始患者档案和病程事件；
-- v1/v2 数据迁移后新增空的 `visitPlans` 数组，原有业务数据不变；
-- 清除全部数据会恢复空的 v3 状态和首次使用流程。
-
-## 后续云同步建议
-
-云同步阶段应增加数据所有者、照护者授权、服务端版本、撤销记录和审计字段。摘要分享链接若放入云端，必须设置访问期限、撤销能力和最小化字段。
+- 上传使用整体覆盖，每个微信身份只保留一份当前备份；
+- 恢复会整体覆盖当前本机业务数据，界面必须二次确认；
+- 清除本地数据与删除云端备份是两个独立操作；
+- 云端删除完成后无法从该备份恢复。

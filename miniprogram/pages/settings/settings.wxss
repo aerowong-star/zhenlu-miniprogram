@@ -5,6 +5,13 @@
 .current { display:flex; justify-content:space-between; margin-top:18rpx; }
 .current>text:first-child { color:#74858e; }
 .current-value { font-weight:650; }
+.backup-card { padding-bottom:24rpx; }
+.backup-row { display:flex; justify-content:space-between; gap:24rpx; padding:10rpx 0; color:#74858e; font-size:25rpx; }
+.backup-value { color:#173042; text-align:right; }
+.backup-note { display:block; margin:18rpx 0 24rpx; padding-top:20rpx; border-top:1rpx solid #e7edef; color:#617680; font-size:24rpx; line-height:1.7; }
+.full-button { width:100%; }
+.cloud-delete { margin-top:20rpx; color:#a33a3a; background:transparent; font-size:26rpx; }
+.secondary-button[disabled], .cloud-delete[disabled] { opacity:.45; }
 .setting { display:flex; align-items:center; justify-content:space-between; }
 .setting text { display:block; }
 .setting-title { font-weight:650; color:#173042; }

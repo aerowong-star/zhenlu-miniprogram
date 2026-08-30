@@ -13,9 +13,10 @@ test.beforeEach(() => { global.wx._store = {} })
 
 test('bootstrap creates an empty versioned state', () => {
   const state = service.bootstrap()
-  assert.equal(state.version, 3)
+  assert.equal(state.version, 4)
   assert.equal(state.patients.length, 0)
   assert.equal(state.visitPlans.length, 0)
+  assert.deepEqual(state.sync, { lastBackupAt: '', lastRestoreAt: '', cloudUpdatedAt: '' })
 })
 
 test('demo creates linked patient, events and visit plan', () => {
@@ -63,14 +64,14 @@ test('editing demo data preserves its demo marker', () => {
   assert.equal(service.getEvent(event.id).isDemo, true)
 })
 
-test('phase 1 local data migrates to schema version 3', () => {
+test('phase 1 local data migrates to schema version 4', () => {
   global.wx._store.zhenlu_phase1_state_v1 = {
     version: 1, hasOnboarded: true, activePatientId: 'p1',
     patients: [{ id: 'p1', nickname: '旧档案', diseaseName: '测试病种' }],
     events: [{ id: 'e1', patientId: 'p1', date: '2026-01-01', title: '旧事件' }],
   }
   const state = service.bootstrap()
-  assert.equal(state.version, 3)
+  assert.equal(state.version, 4)
   assert.equal(state.patients[0].nickname, '旧档案')
   assert.equal(state.events[0].report, null)
 })
@@ -81,8 +82,20 @@ test('phase 2 local data migrates with an empty visit plan list', () => {
     patients: [{ id: 'p2', nickname: '第二阶段档案', diseaseName: '测试病种' }], events: [],
   }
   const state = service.bootstrap()
-  assert.equal(state.version, 3)
+  assert.equal(state.version, 4)
   assert.deepEqual(state.visitPlans, [])
+})
+
+test('phase 3 local data migrates with empty sync metadata', () => {
+  global.wx._store.zhenlu_state_v3 = {
+    version: 3, hasOnboarded: true, activePatientId: 'p3',
+    patients: [{ id: 'p3', nickname: '第三阶段档案', diseaseName: '测试病种' }],
+    events: [], visitPlans: [],
+  }
+  const state = service.bootstrap()
+  assert.equal(state.version, 4)
+  assert.equal(state.activePatientId, 'p3')
+  assert.deepEqual(state.sync, { lastBackupAt: '', lastRestoreAt: '', cloudUpdatedAt: '' })
 })
 
 test('OCR report details are stored with their timeline event', () => {
@@ -133,4 +146,47 @@ test('editing selected source data invalidates a confirmed visit summary', () =>
   service.confirmVisitSummary(plan.id, { title: '新快照' }, 'signature-2', { showNickname: false })
   service.savePatient({ ...patient, stage: '新阶段' })
   assert.equal(service.getVisitPlan(plan.id).summarySnapshot, null)
+})
+
+test('backup export contains business data but excludes local sync metadata', () => {
+  service.bootstrap()
+  const patient = service.savePatient({ nickname: '备份患者', diseaseName: '测试病种' })
+  service.saveEvent({ patientId: patient.id, date: '2026-08-30', title: '备份事件' })
+  service.markCloudBackup('2026-08-30T12:00:00.000Z')
+  const payload = service.exportBackupPayload()
+  assert.equal(payload.schemaVersion, 4)
+  assert.equal(payload.data.patients[0].id, patient.id)
+  assert.equal('sync' in payload.data, false)
+})
+
+test('valid cloud backup restores business data and records restore metadata', () => {
+  service.bootstrap()
+  const payload = {
+    schemaVersion: 4,
+    exportedAt: '2026-08-30T10:00:00.000Z',
+    data: {
+      hasOnboarded: true, activePatientId: 'p1',
+      patients: [{ id: 'p1', nickname: '云端患者', diseaseName: '测试病种' }],
+      events: [{ id: 'e1', patientId: 'p1', date: '2026-08-29', title: '云端事件' }],
+      visitPlans: [{ id: 'v1', patientId: 'p1', visitDate: '2026-09-01', purpose: '复诊', selectedEventIds: ['e1'] }],
+    },
+  }
+  const state = service.restoreBackupPayload(payload, '2026-08-30T10:01:00.000Z')
+  assert.equal(state.patients[0].nickname, '云端患者')
+  assert.equal(state.events[0].report, null)
+  assert.equal(state.sync.cloudUpdatedAt, '2026-08-30T10:01:00.000Z')
+  assert.ok(state.sync.lastRestoreAt)
+})
+
+test('backup restore rejects records linked across patients', () => {
+  const payload = {
+    schemaVersion: 4,
+    data: {
+      hasOnboarded: true, activePatientId: 'p1',
+      patients: [{ id: 'p1' }, { id: 'p2' }],
+      events: [{ id: 'e1', patientId: 'p2' }],
+      visitPlans: [{ id: 'v1', patientId: 'p1', selectedEventIds: ['e1'] }],
+    },
+  }
+  assert.throws(() => service.restoreBackupPayload(payload), /复诊材料关联无效/)
 })
