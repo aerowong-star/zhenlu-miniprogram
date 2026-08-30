@@ -1,0 +1,15 @@
+<view class="page visit-list-page">
+  <view class="page-title">复诊准备</view>
+  <view class="page-subtitle" wx:if="{{patient}}">{{patient.nickname}} · 把需要说明的病程和问题提前整理好</view>
+  <view wx:if="{{plans.length}}" class="plans">
+    <view class="plan-card card" wx:for="{{plans}}" wx:key="id" data-id="{{item.id}}" bindtap="open">
+      <view class="plan-top"><view><view class="plan-date">{{item.displayDate}}</view><view class="plan-place">{{item.hospital || '医院待补充'}} · {{item.department || '科室待补充'}}</view></view><text class="tag">{{item.statusLabel}}</text></view>
+      <view class="plan-purpose">{{item.purpose}}</view>
+      <view class="plan-meta"><text>{{item.materialCount}} 份病程材料</text><text>{{item.questionCount}} 个问题</text></view>
+      <view class="plan-actions"><text data-id="{{item.id}}" catchtap="edit">编辑</text><text class="remove" data-id="{{item.id}}" catchtap="remove">删除</text></view>
+    </view>
+  </view>
+  <view wx:else class="card empty">还没有复诊计划。创建后可以选择病程材料并整理问题。</view>
+  <button class="primary-button add-button" bindtap="add">＋ 新建复诊计划</button>
+  <view class="safe-note">复诊摘要只整理你选择并确认的信息，不替代医生判断。</view>
+</view>

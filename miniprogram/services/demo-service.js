@@ -39,4 +39,20 @@ function demoEvents() {
   ]
 }
 
-module.exports = { DEMO_PATIENT_ID, demoPatient, demoEvents }
+function demoVisitPlans() {
+  return [{
+    id: 'visit_demo_1', patientId: DEMO_PATIENT_ID, visitDate: '2026-09-15',
+    hospital: '示例儿童医院', department: '遗传代谢科', doctor: '',
+    purpose: '整理近期检查结果，与医生确认下一阶段复查安排。',
+    selectedEventIds: ['event_demo_2', 'event_demo_3'],
+    questions: [
+      { id: 'question_demo_1', content: '下一次需要复查哪些项目？', answered: false, note: '' },
+      { id: 'question_demo_2', content: '日常记录中还需要重点关注什么？', answered: false, note: '' },
+    ],
+    status: 'draft', privacyOptions: null, summarySnapshot: null,
+    sourceSignature: '', confirmedAt: '', isDemo: true,
+    createdAt: '2026-08-20T09:00:00.000Z', updatedAt: '2026-08-20T09:00:00.000Z',
+  }]
+}
+
+module.exports = { DEMO_PATIENT_ID, demoPatient, demoEvents, demoVisitPlans }

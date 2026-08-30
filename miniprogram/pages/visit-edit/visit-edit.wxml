@@ -1,0 +1,11 @@
+<view class="page form-page">
+  <view class="page-title">{{id?'编辑复诊计划':'新建复诊计划'}}</view>
+  <view class="page-subtitle" wx:if="{{patient}}">为 {{patient.nickname}} 准备本次复诊材料</view>
+  <label class="label required">复诊日期</label><picker mode="date" value="{{form.visitDate}}" bindchange="dateChange"><view class="field picker-field">{{form.visitDate}}</view></picker>
+  <label class="label">医院</label><input class="field" maxlength="50" placeholder="选填" value="{{form.hospital}}" data-field="hospital" bindinput="fieldInput" />
+  <label class="label">科室</label><input class="field" maxlength="30" placeholder="选填" value="{{form.department}}" data-field="department" bindinput="fieldInput" />
+  <label class="label">医生</label><input class="field" maxlength="30" placeholder="选填" value="{{form.doctor}}" data-field="doctor" bindinput="fieldInput" />
+  <label class="label required">本次复诊目的</label><textarea class="field" maxlength="300" placeholder="例如：携带近期检查结果，确认后续复查安排" value="{{form.purpose}}" data-field="purpose" bindinput="fieldInput" />
+  <view class="safe-note">这里只记录你准备与医生沟通的目标，不生成诊断或治疗建议。</view>
+  <button class="primary-button save-button" bindtap="save">下一步：选择病程材料</button>
+</view>

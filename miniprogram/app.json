@@ -8,6 +8,11 @@
     "pages/event-edit/event-edit",
     "pages/report-import/report-import",
     "pages/event-detail/event-detail",
+    "pages/visit-plans/visit-plans",
+    "pages/visit-edit/visit-edit",
+    "pages/visit-materials/visit-materials",
+    "pages/visit-questions/visit-questions",
+    "pages/visit-summary/visit-summary",
     "pages/settings/settings"
   ],
   "window": {

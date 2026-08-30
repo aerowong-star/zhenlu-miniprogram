@@ -1,0 +1,13 @@
+<view class="page materials-page">
+  <view class="page-title">选择病程材料</view>
+  <view class="page-subtitle">只把与本次复诊有关的记录放进摘要，减少不必要的信息展示。</view>
+  <checkbox-group bindchange="selectionChange" class="materials">
+    <label class="material card" wx:for="{{events}}" wx:key="id">
+      <checkbox value="{{item.id}}" checked="{{item.selected}}" color="#197278" />
+      <view class="material-content"><view class="material-head"><text>{{item.title}}</text><text class="tag">{{item.typeLabel}}</text></view><view class="helper">{{item.displayDate}} · {{item.hospital || '机构待补充'}}</view><view wx:if="{{item.description}}" class="description">{{item.description}}</view></view>
+    </label>
+  </checkbox-group>
+  <view wx:if="{{!events.length}}" class="card empty">当前档案还没有病程记录，也可以先继续整理问题清单。</view>
+  <view class="selected-count">已选择 {{selectedIds.length}} 份材料</view>
+  <button class="primary-button" bindtap="save">下一步：整理问题</button>
+</view>
