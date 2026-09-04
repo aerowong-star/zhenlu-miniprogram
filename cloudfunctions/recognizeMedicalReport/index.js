@@ -66,7 +66,8 @@ async function consumeDailyQuota(openid) {
   let current = null
   try { current = (await doc.get()).data } catch (_) {}
   if (current && Number(current.count) >= DAILY_LIMIT) throw new Error(`今日识别次数已达到 ${DAILY_LIMIT} 次，请明天再试`)
-  await doc.set({ data: { day, count: Number(current && current.count || 0) + 1, updatedAt: cloud.database().serverDate() } })
+  const expiresAt = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString()
+  await doc.set({ data: { userHash, day, count: Number(current && current.count || 0) + 1, expiresAt, updatedAt: cloud.database().serverDate() } })
 }
 
 exports.main = async event => {

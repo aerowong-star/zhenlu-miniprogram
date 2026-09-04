@@ -1,0 +1,4 @@
+.document-section { margin-top:34rpx; }
+.document-section text { display:block; }
+.heading { margin-bottom:12rpx; font-size:31rpx; font-weight:700; }
+.document-section text:last-child { color:#526b77; line-height:1.85; }

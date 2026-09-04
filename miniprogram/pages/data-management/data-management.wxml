@@ -1,0 +1,27 @@
+<view class="page">
+  <view class="page-title">数据与隐私管理</view>
+  <view class="page-subtitle">查看政策、撤回同意，并分别管理当前设备和当前微信身份关联的云端数据。</view>
+  <view class="section-title">政策文件</view>
+  <view class="setting card" bindtap="openPrivacy"><view><text class="setting-title">隐私政策</text><text>了解信息类型、用途、共享和删除方式</text></view><view>›</view></view>
+  <view class="setting card" bindtap="openAgreement"><view><text class="setting-title">用户协议</text><text>了解服务边界和使用责任</text></view><view>›</view></view>
+
+  <view class="section-title">当前设备</view>
+  <view class="card data-card"><view><text>患者档案</text><text>{{localPatientCount}}</text></view><view><text>病程事件</text><text>{{localEventCount}}</text></view></view>
+  <button class="danger-button action-button" bindtap="deleteLocal">清除全部本地业务数据</button>
+
+  <view class="section-title">当前微信身份的云端数据</view>
+  <view wx:if="{{inspected}}" class="card data-card">
+    <view><text>个人云备份</text><text>{{summary.backupCount}}</text></view>
+    <view><text>待接受邀请码</text><text>{{summary.pendingInviteCount}}</text></view>
+    <view><text>我管理的共享</text><text>{{summary.managedShareCount}}</text></view>
+    <view><text>别人共享给我</text><text>{{summary.receivedShareCount}}</text></view>
+  </view>
+  <view wx:else class="card empty">尚未查询。查询只返回数量，不返回医疗内容。</view>
+  <button class="secondary-button action-button" loading="{{loading}}" disabled="{{loading}}" bindtap="inspectCloud">查询云端数据</button>
+  <button class="danger-button action-button" loading="{{loading}}" disabled="{{loading}}" bindtap="deleteCloud">删除全部云端数据</button>
+
+  <view class="section-title">隐私同意</view>
+  <view class="card consent-status"><text>当前状态</text><text>{{consented ? '已同意当前版本' : '未同意或版本已更新'}}</text></view>
+  <button wx:if="{{consented}}" class="danger-button action-button" bindtap="revokeConsent">撤回隐私同意</button>
+  <view class="safe-note">删除云端数据不会删除当前设备上的数据；清除本地数据也不会自动删除云端数据。如需完全删除，请分别执行两项操作。</view>
+</view>

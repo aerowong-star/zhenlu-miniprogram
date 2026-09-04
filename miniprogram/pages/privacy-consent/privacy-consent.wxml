@@ -1,0 +1,18 @@
+<view class="page consent-page">
+  <view class="brand-mark">诊</view>
+  <view class="page-title">使用前，请了解数据如何处理</view>
+  <view class="page-subtitle">诊路会处理患者档案、病程、人工核对后的检验文字和复诊计划等敏感信息。数据默认保存在本机，只有你主动使用云功能时才发送到云端。</view>
+  <view class="card summary-card">
+    <view class="summary-item"><text>本地整理</text><text>档案和病程默认保存在当前设备</text></view>
+    <view class="summary-item"><text>报告识别</text><text>明确操作后临时上传，完成后删除原图</text></view>
+    <view class="summary-item"><text>云备份与协作</text><text>只有主动确认后启用，可单独删除或撤销</text></view>
+    <view class="summary-item"><text>医疗边界</text><text>不提供诊断、治疗或用药建议</text></view>
+  </view>
+  <view class="document-links"><text bindtap="openPrivacy">《隐私政策》</text><text bindtap="openAgreement">《用户协议》</text></view>
+  <checkbox-group bindchange="agreementChange">
+    <label class="agreement"><checkbox value="accepted" checked="{{agreed}}" color="#197278" /><text>我已阅读并同意隐私政策和用户协议（版本 {{policyVersion}}）</text></label>
+  </checkbox-group>
+  <button class="primary-button" disabled="{{!agreed}}" bindtap="accept">同意并继续</button>
+  <button class="text-button" bindtap="decline">暂不同意</button>
+  <button class="data-button" bindtap="openDataManagement">管理或删除已有数据</button>
+</view>

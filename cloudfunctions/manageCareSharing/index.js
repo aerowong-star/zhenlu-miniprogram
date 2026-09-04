@@ -6,11 +6,21 @@ cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV })
 const db = cloud.database()
 const INVITES = 'care_invites'
 const GRANTS = 'care_grants'
+const RATE_LIMITS = 'service_rate_limits'
 const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 const ALLOWED_EXPIRY_HOURS = new Set([24, 72, 168])
 
 function success(data = {}) { return { ok: true, data } }
 function failure(message) { return { ok: false, message } }
+function publicErrorMessage(error) {
+  const message = String(error && error.message || '')
+  const safePatterns = [
+    /^操作过于频繁/, /^邀请码/, /^不能接受自己创建的邀请码$/,
+    /^请输入有效的 12 位邀请码$/, /^共享/, /^患者标识格式无效$/,
+    /^患者称呼格式无效$/, /^病种名称格式无效$/,
+  ]
+  return safePatterns.some(pattern => pattern.test(message)) ? message : '照护者协作服务暂时不可用'
+}
 function hash(value) { return crypto.createHash('sha256').update(value).digest('hex').slice(0, 32) }
 function userHash(openid) { return hash(`user:${openid}`) }
 function inviteId(code) { return hash(`invite:${code}`) }
@@ -56,6 +66,19 @@ async function readDocument(collection, id) {
     throw error
   }
 }
+async function consumeRateLimit(rateUserHash, operation, maximum, windowMs) {
+  const windowStart = Math.floor(Date.now() / windowMs) * windowMs
+  const id = hash(`rate:care:${rateUserHash}:${operation}:${windowStart}`)
+  const document = db.collection(RATE_LIMITS).doc(id)
+  let current = null
+  try { current = (await document.get()).data } catch (_) {}
+  const count = Number(current && current.count || 0)
+  if (count >= maximum) throw new Error('操作过于频繁，请稍后再试')
+  await document.set({ data: {
+    userHash: rateUserHash, service: 'care', operation, count: count + 1,
+    expiresAt: new Date(windowStart + windowMs + 24 * 60 * 60 * 1000).toISOString(),
+  } })
+}
 
 exports.main = async event => {
   try {
@@ -63,6 +86,10 @@ exports.main = async event => {
     if (!OPENID) return failure('无法确认当前微信身份')
     const callerHash = userHash(OPENID)
     const action = event && event.action
+    const rateUserHash = hash(OPENID)
+    if (action === 'createInvite') await consumeRateLimit(rateUserHash, 'createInvite', 20, 24 * 60 * 60 * 1000)
+    else if (action === 'previewInvite' || action === 'acceptInvite') await consumeRateLimit(rateUserHash, 'inviteAccess', 60, 60 * 60 * 1000)
+    else await consumeRateLimit(rateUserHash, 'careReadWrite', 300, 60 * 60 * 1000)
 
     if (action === 'createInvite') {
       const sanitized = sanitizeSnapshot(event.snapshot, event.scopes)
@@ -193,6 +220,6 @@ exports.main = async event => {
     return failure('不支持的照护协作操作')
   } catch (error) {
     console.error('照护协作操作失败', { action: event && event.action, message: error.message })
-    return failure(error.message || '照护者协作服务暂时不可用')
+    return failure(publicErrorMessage(error))
   }
 }

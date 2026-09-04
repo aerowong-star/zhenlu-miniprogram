@@ -1,0 +1,9 @@
+.setting { display:flex; align-items:center; justify-content:space-between; }
+.setting text { display:block; }
+.setting-title { font-weight:650; }
+.setting view text:last-child { margin-top:8rpx; color:#71848e; font-size:23rpx; }
+.setting>view:last-child { color:#94a2a8; font-size:44rpx; }
+.data-card view, .consent-status { display:flex; justify-content:space-between; gap:24rpx; padding:10rpx 0; }
+.data-card text:first-child, .consent-status text:first-child { color:#71848e; }
+.data-card text:last-child, .consent-status text:last-child { font-weight:650; }
+.action-button { width:100%; margin-top:18rpx; }

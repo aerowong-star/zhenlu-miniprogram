@@ -1,0 +1,12 @@
+.consent-page { padding-top:54rpx; }
+.brand-mark { width:82rpx; height:82rpx; margin-bottom:30rpx; border-radius:24rpx; background:#197278; color:white; font-size:44rpx; font-weight:750; line-height:82rpx; text-align:center; }
+.summary-card { margin-top:28rpx; }
+.summary-item { padding:18rpx 0; border-bottom:1rpx solid #e7edef; }
+.summary-item:last-child { border-bottom:0; }
+.summary-item text { display:block; }
+.summary-item text:first-child { font-weight:650; }
+.summary-item text:last-child { margin-top:7rpx; color:#687d87; font-size:24rpx; line-height:1.55; }
+.document-links { display:flex; gap:26rpx; margin:26rpx 0 20rpx; color:#197278; font-weight:600; }
+.agreement { display:flex; align-items:flex-start; gap:14rpx; margin-bottom:28rpx; color:#526b77; font-size:25rpx; line-height:1.6; }
+.text-button, .data-button { width:100%; margin-top:18rpx; background:transparent; color:#667985; font-size:27rpx; }
+.data-button { color:#197278; }

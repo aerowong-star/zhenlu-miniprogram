@@ -18,6 +18,7 @@ Page({
     patientCount: 0, eventCount: 0, reportCount: 0, visitCount: 0, activeName: '未选择',
     cloudLoading: false, cloudChecked: false, cloudExists: false,
     cloudStatusLabel: '尚未检查', cloudUpdatedLabel: '暂无', localBackupLabel: '暂无',
+    hasDemoData: false,
   },
 
   onShow() { this.refreshLocal() },
@@ -32,6 +33,7 @@ Page({
       visitCount: state.visitPlans.length,
       activeName: active ? active.nickname : '未选择',
       localBackupLabel: formatTime(state.sync && state.sync.lastBackupAt),
+      hasDemoData: state.patients.some(item => item.isDemo),
     })
   },
 
@@ -62,6 +64,10 @@ Page({
 
   async backup() {
     if (this.data.cloudLoading) return
+    if (this.data.hasDemoData) {
+      wx.showToast({ title: '示例数据不能云备份', icon: 'none' })
+      return
+    }
     const approved = await confirm({
       title: this.data.cloudExists ? '覆盖云端备份？' : '创建个人云备份？',
       content: '将上传患者档案、病程文字、OCR 核对结果和复诊计划。不会上传报告原图，也不会包含任何服务密钥。',
@@ -129,6 +135,7 @@ Page({
   },
 
   openCareSharing() { wx.navigateTo({ url: '/pages/care-sharing/care-sharing' }) },
+  openDataManagement() { wx.navigateTo({ url: '/pages/data-management/data-management' }) },
 
   loadDemo() {
     wx.showModal({
