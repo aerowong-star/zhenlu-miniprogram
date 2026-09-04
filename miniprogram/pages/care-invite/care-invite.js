@@ -34,7 +34,12 @@ Page({
     const confirmed = await new Promise(resolve => wx.showModal({
       title: '确认创建邀请码？',
       content: `将向“${this.data.caregiverLabel.trim() || '照护者'}”共享：${labels.join('、')}。接受授权后，对方可持续查看，直到你撤销。`,
-      confirmText: '创建邀请码', success: result => resolve(Boolean(result.confirm)), fail: () => resolve(false),
+      confirmText: '确认创建',
+      success: result => resolve(Boolean(result.confirm)),
+      fail: () => {
+        wx.showToast({ title: '确认窗口打开失败，请重试', icon: 'none' })
+        resolve(false)
+      },
     }))
     if (!confirmed) return
     this.setData({ loading: true })

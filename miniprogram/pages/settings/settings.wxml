@@ -16,10 +16,11 @@
     <view class="backup-row"><text>云端更新时间</text><text class="backup-value">{{cloudUpdatedLabel}}</text></view>
     <view class="backup-row"><text>本机最近备份</text><text class="backup-value">{{localBackupLabel}}</text></view>
     <text class="backup-note">每个微信身份只保留一份备份。备份包含医疗相关文字，建议只在自己的微信账号和可信设备上操作。</text>
+    <view wx:if="{{hasDemoData}}" class="safe-note demo-backup-note">当前包含示例病例，云备份已禁用。删除示例病例后才能备份自己的数据。</view>
     <button class="secondary-button full-button" loading="{{cloudLoading}}" disabled="{{cloudLoading}}" bindtap="checkBackup">检查云备份</button>
     <view class="button-row">
-      <button class="primary-button" disabled="{{cloudLoading}}" bindtap="backup">{{cloudExists ? '覆盖备份' : '立即备份'}}</button>
-      <button class="secondary-button" disabled="{{cloudLoading || !cloudExists}}" bindtap="restore">恢复到本机</button>
+      <button class="primary-button" disabled="{{cloudLoading || hasDemoData}}" bindtap="backup">{{hasDemoData ? '示例数据不可备份' : (cloudExists ? '覆盖备份' : '立即备份')}}</button>
+      <button class="secondary-button" disabled="{{cloudLoading || !cloudExists || hasDemoData}}" bindtap="restore">{{hasDemoData ? '示例数据不可恢复' : '恢复到本机'}}</button>
     </view>
     <button wx:if="{{cloudExists}}" class="cloud-delete" disabled="{{cloudLoading}}" bindtap="deleteCloudBackup">删除云端备份</button>
   </view>
@@ -27,6 +28,11 @@
   <view class="section-title">照护者协作</view>
   <view class="setting card" bindtap="openCareSharing">
     <view><text class="setting-title">管理只读共享授权</text><text>一次性邀请码、最小共享范围和随时撤销</text></view><view>›</view>
+  </view>
+
+  <view class="section-title">数据与隐私</view>
+  <view class="setting card" bindtap="openDataManagement">
+    <view><text class="setting-title">数据与隐私管理</text><text>查看政策、撤回同意、删除本地或全部云端数据</text></view><view>›</view>
   </view>
 
   <view class="section-title">体验数据</view>
@@ -38,5 +44,5 @@
   </view>
   <view class="section-title danger-title">危险操作</view>
   <button class="danger-button" bindtap="reset">清除全部本地数据</button>
-  <view class="version">诊路 Phase 5 · v0.5.0</view>
+  <view class="version">诊路 Phase 6 · v0.6.0</view>
 </view>

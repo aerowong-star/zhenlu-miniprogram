@@ -1,4 +1,5 @@
 const { normalizeMedicalReport } = require('./ocr-normalizer')
+const { normalizeCloudError, businessError } = require('./cloud-error')
 
 const CLOUD_FUNCTION_NAME = 'recognizeMedicalReport'
 
@@ -25,8 +26,8 @@ function recognizeDemo() {
 }
 
 async function recognizeImage(imagePath) {
-  if (!imagePath) throw new Error('请先选择报告图片')
-  if (!wx.cloud || !wx.cloud.uploadFile || !wx.cloud.callFunction) throw new Error('当前环境未启用微信云开发')
+  if (!imagePath) throw businessError('请先选择报告图片')
+  if (!wx.cloud || !wx.cloud.uploadFile || !wx.cloud.callFunction) throw businessError('当前环境未启用微信云开发')
   const extension = (imagePath.match(/\.(jpe?g|png|bmp)$/i) || [])[1] || 'jpg'
   const cloudPath = `ocr-temp/${Date.now()}-${Math.random().toString(36).slice(2, 9)}.${extension}`
   let fileID = ''
@@ -35,8 +36,10 @@ async function recognizeImage(imagePath) {
     fileID = uploaded.fileID
     const response = await wx.cloud.callFunction({ name: CLOUD_FUNCTION_NAME, data: { fileID } })
     const payload = response && response.result
-    if (!payload || payload.ok === false) throw new Error((payload && payload.message) || 'OCR 识别失败')
+    if (!payload || payload.ok === false) throw businessError((payload && payload.message) || 'OCR 识别失败')
     return { ...normalizeMedicalReport(payload.data || payload), provider: 'baidu-medical-ocr', isDemo: false }
+  } catch (error) {
+    throw normalizeCloudError(error, '报告识别服务暂时不可用，请稍后重试')
   } finally {
     if (fileID && wx.cloud.deleteFile) wx.cloud.deleteFile({ fileList: [fileID] }).catch(() => {})
   }

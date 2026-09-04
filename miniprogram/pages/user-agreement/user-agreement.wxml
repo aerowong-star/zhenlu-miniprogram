@@ -1,0 +1,9 @@
+<view class="page document-page">
+  <view class="page-title">诊路用户协议</view><view class="page-subtitle">版本：{{version}}</view>
+  <view class="document-section"><text class="heading">1. 服务定位</text><text>诊路是患者和照护者使用的病程整理与复诊准备工具，不是医疗机构、互联网医院或医疗器械，不提供诊断、检验结果解释、治疗方案或用药建议。</text></view>
+  <view class="document-section"><text class="heading">2. 使用责任</text><text>用户应核对自行录入或 OCR 识别的内容，不应仅凭本工具内容作出医疗决定。紧急情况应立即联系当地急救服务或专业医疗机构。</text></view>
+  <view class="document-section"><text class="heading">3. 数据授权</text><text>用户只能处理自己有权管理的资料。邀请照护者前应确认具备相应授权，并通过可信渠道发送邀请码。照护者不得超出照护目的使用、传播或公开共享内容。</text></view>
+  <view class="document-section"><text class="heading">4. 示例内容</text><text>应用中的示例患者、医院、指标和事件均为虚构，仅用于演示产品流程，不代表真实医学参考范围或建议。</text></view>
+  <view class="document-section"><text class="heading">5. 服务变化</text><text>测试阶段功能可能调整或中断。用户应在重要就诊前自行核对并保留必要资料，不应将本工具作为唯一病历保存方式。</text></view>
+  <view class="safe-note">本协议模板不替代针对实际运营主体和服务地区的法律审查。</view>
+</view>
